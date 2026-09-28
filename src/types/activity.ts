@@ -12,6 +12,17 @@ export interface Activity {
   completed_at: string | null;
 }
 
+export interface ActivityResponse {
+  message: string;
+  data: {
+    items: Activity[];
+    limit: number;
+    page: number;
+    total_items: number;
+    total_pages: number;
+  };
+}
+
 export interface ActivityFilterParams {
   page?: number;
   limit?: number;

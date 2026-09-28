@@ -1,99 +1,84 @@
-import React, { HTMLAttributes, ReactNode } from 'react'
+import React from 'react';
 
-export type CardPadding = "none" | "sm" | "md" | "lg";
-export type CardShadow = "none" | "sm" | "md";
-
-export interface CardProps extends HTMLAttributes<HTMLDivElement> {
-     children: ReactNode;
-     padding?: CardPadding;
-     shadow?: CardShadow;
-     hoverable?: boolean;
+interface CardProps extends Omit<React.ComponentPropsWithoutRef<'div'>, 'title'> {
+  title?: React.ReactNode;
+  extra?: React.ReactNode;
+  cover?: React.ReactNode;
+  actions?: React.ReactNode[];
 }
 
-const PADDING_CLASSES: Record<CardPadding, string> = {
-     none: "card-padding-none",
-     sm: "card-padding-sm",
-     md: "card-padding-md",
-     lg: "card-padding-lg",
-};
+function Card({ className, children, title, extra, cover, actions, ...props }: CardProps) {
+  const cardClasses = `card-container ${className || ''}`.trim();
 
-const SHADOW_CLASSES: Record<CardShadow, string> = {
-     none: "",
-     sm: "card-shadow-sm",
-     md: "card-shadow-md",
-};
+  return (
+    <div className={cardClasses} {...props}>
+      {cover && (
+        <div className="w-full overflow-hidden">
+          {cover}
+        </div>
+      )}
+      {(title || extra) && (
+        <div className="card-header-wrapper">
+          {title && <div className="card-title-text">{title}</div>}
+          {extra && <div className="card-extra-text">{extra}</div>}
+        </div>
+      )}
 
-function Card({
-     children,
-     padding = "md",
-     shadow = "none",
-     hoverable = false,
-     className = "",
-     ...props
-}: CardProps) {
-     const classes = [
-          "card",
-          PADDING_CLASSES[padding],
-          SHADOW_CLASSES[shadow],
-          hoverable ? "card-hoverable" : "",
-          className,
-     ].filter(Boolean).join(" ");
-     return (
-          <div className={classes} {...props}>
-               {children}
-          </div>
-     )
+      <div className="card-body">{children}</div>
+
+      {actions && actions.length > 0 && (
+        <div className="card-actions-wrapper">
+          {actions.map((action, i) => {
+            const isNotLast = i < actions.length - 1;
+            const actionClasses = `card-action-item ${
+              isNotLast ? 'card-action-item-bordered' : ''
+            }`.trim();
+
+            return (
+              <div key={i} className={actionClasses}>
+                {action}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
-function CardHeader({
-     children,
-     className = "",
-     ...props
-}: HTMLAttributes<HTMLDivElement>) {
-     return (
-          <div className={["card-header", className].filter(Boolean).join(" ")} {...props}>
-               {children}
-          </div>
-     );
+interface CardMetaProps extends Omit<React.ComponentPropsWithoutRef<'div'>, 'title'> {
+  avatar?: React.ReactNode;
+  title?: React.ReactNode;
+  description?: React.ReactNode;
 }
 
-function CardTitle({
-     children,
-     className = "",
-     ...props
-}: HTMLAttributes<HTMLHeadingElement>) {
-     return (
-          <h3 className={["card-title", className].filter(Boolean).join(" ")} {...props}>
-               {children}
-          </h3>
-     )
+function CardMeta({ className, avatar, title, description, ...props }: CardMetaProps) {
+  const metaClasses = `card-meta ${className || ''}`.trim();
+
+  return (
+    <div className={metaClasses} {...props}>
+      {avatar && <div className="shrink-0">{avatar}</div>}
+      <div className="flex-1 min-w-0">
+        {title && <div className="card-meta-title">{title}</div>}
+        {description && <div className="card-meta-description">{description}</div>}
+      </div>
+    </div>
+  );
 }
 
-function CardSubtitle({
-     children,
-     className = "",
-     ...props
-}: HTMLAttributes<HTMLParagraphElement>) {
-     <p className={["card-subtitle", className].filter(Boolean).join(" ")} {...props}>
-          {children}
-     </p>
+interface CardGridProps extends React.ComponentPropsWithoutRef<'div'> {}
+
+function CardGrid({ className, children, ...props }: CardGridProps) {
+  const gridClasses = `card-grid ${className || ''}`.trim();
+
+  return (
+    <div className={gridClasses} {...props}>
+      {children}
+    </div>
+  );
 }
 
-function CardFooter({
-     children,
-     className = "",
-     ...props
-}: HTMLAttributes<HTMLDivElement>) {
-     return (
-          <div className={["card-footer", className].filter(Boolean).join(" ")} {...props}>
-               {children}
-          </div>
-     )
-}
+Card.Meta = CardMeta;
+Card.Grid = CardGrid;
 
-Card.Header = CardHeader;
-Card.Title = CardTitle;
-Card.Subtitle = CardSubtitle;
-Card.Footer = CardFooter;
-
-export default Card
+export default Card;

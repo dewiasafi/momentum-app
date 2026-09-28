@@ -21,11 +21,11 @@
 
   .radio-circle {
     @apply relative flex items-center justify-center rounded-full border bg-white border-neutral-300 transition-colors;
-    @apply after:content-[''] after:block after:rounded-full after:bg-momentum-500 after:opacity-0 after:transition-opacity;
+    @apply after:content-[''] after:block after:rounded-full after:bg-accent-forest after:opacity-0 after:transition-opacity;
 
     @apply peer-[:hover:not(:disabled)]:border-neutral-400;
-    @apply peer-checked:border-momentum-500 peer-checked:after:opacity-100;
-    @apply peer-focus-visible:ring-2 peer-focus-visible:ring-momentum-300 peer-focus-visible:ring-offset-1;
+    @apply peer-checked:border-accent-forest peer-checked:after:opacity-100;
+    @apply peer-focus-visible:ring-2 peer-focus-visible:ring-accent-olive peer-focus-visible:ring-offset-1;
     @apply peer-disabled:bg-neutral-100 peer-disabled:border-neutral-200;
   }
 

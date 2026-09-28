@@ -9,7 +9,7 @@
   }
 
   .accordion-item-header:focus-visible {
-    @apply outline-none ring-2 ring-momentum-300 ring-inset;
+    @apply outline-none ring-2 ring-accent-olive ring-inset;
   }
 
   .accordion-icon {

@@ -18,9 +18,9 @@
     @apply after:rounded-full after:bg-white after:shadow-sm after:transition-transform;
 
     @apply peer-[:hover:not(:disabled)]:bg-neutral-400;
-    @apply peer-checked:bg-momentum-500 peer-checked:border-momentum-300;
-    @apply peer-checked:hover:bg-momentum-300 peer-checked:hover:border-momentum-300;
-    @apply peer-focus-visible:ring-2 peer-focus-visible:ring-momentum-300 peer-focus-visible:ring-offset-1;
+    @apply peer-checked:bg-accent-forest peer-checked:border-accent-olive;
+    @apply peer-checked:hover:bg-accent-olive peer-checked:hover:border-accent-olive;
+    @apply peer-focus-visible:ring-2 peer-focus-visible:ring-accent-olive peer-focus-visible:ring-offset-1;
     @apply peer-disabled:opacity-50 peer-disabled:cursor-not-allowed;
   }
 
@@ -29,7 +29,7 @@
   }
 
   .switch-wrapper:hover:not(:has(.switch-input:disabled)) .switch-input:checked~.switch-track {
-    @apply bg-momentum-300 border-momentum-300;
+    @apply bg-accent-olive border-accent-olive;
   }
 
   .switch-track-sm {

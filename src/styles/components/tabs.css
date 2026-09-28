@@ -20,11 +20,11 @@
   }
 
   .tab-head:focus-visible {
-    @apply outline-none ring-2 ring-momentum-300 rounded-sm;
+    @apply outline-none ring-2 ring-accent-olive rounded-sm;
   }
 
   .tab-head-active {
-    @apply text-momentum-700 border-momentum-500;
+    @apply text-accent-forest-dark border-accent-forest;
   }
 
   .tab-panel {

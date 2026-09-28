@@ -1,6 +1,6 @@
 @layer components{
 .table-wrapper {
-    @apply w-full overflow-hidden rounded-xl border border-momentum-neutral-200 bg-white shadow-xs;
+    @apply w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs;
   }
 
   .table-container {
@@ -8,11 +8,11 @@
   }
 
   .table {
-    @apply w-full border-collapse text-left text-sm text-momentum-neutral-700;
+    @apply w-full border-collapse text-left text-sm text-text-subtext;
   }
 
   .table-head {
-    @apply text-xs font-semibold uppercase tracking-wider border-b border-momentum-neutral-200 bg-momentum-neutral-50 text-momentum-neutral-600;
+    @apply text-xs font-semibold uppercase tracking-wider border-b border-slate-200 bg-slate-50 text-slate-600;
     color: inherit; /* Memastikan warna teks mengikuti parent/utility class */
   }
 
@@ -40,7 +40,7 @@
   }
 
   .table-body {
-    @apply divide-y divide-momentum-neutral-200 bg-white;
+    @apply divide-y divide-slate-200 bg-white;
   }
 
   .table-body-row {
@@ -48,26 +48,26 @@
   }
 
   .table-body-row-hoverable:hover {
-    @apply bg-momentum-neutral-50/80;
+    @apply bg-slate-50/80;
   }
 
   .table-body-row-striped {
-    @apply bg-momentum-neutral-50/40;
+    @apply bg-slate-50/40;
   }
 
   .table-cell {
-    @apply px-6 py-4 text-momentum-neutral-700 whitespace-nowrap;
+    @apply px-6 py-4 text-text-subtext whitespace-nowrap;
   }
 
 
   /* ==================== PAGINATION (BUILT-IN TABLE) ==================== */
   
   .pagination-wrapper {
-    @apply flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-3.5 border-t border-momentum-neutral-200 bg-momentum-neutral-50/50;
+    @apply flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-3.5 border-t border-slate-200 bg-slate-50/50;
   }
 
   .pagination-info {
-    @apply text-sm text-momentum-neutral-600;
+    @apply text-sm text-slate-600;
   }
 
   .pagination-nav {
@@ -75,14 +75,14 @@
   }
 
   .pagination-item {
-    @apply inline-flex items-center justify-center min-w-9 h-9 px-3 text-sm font-medium rounded-lg transition-all duration-150 select-none border border-momentum-neutral-200 bg-white text-momentum-neutral-700 hover:bg-momentum-neutral-50 hover:text-momentum-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-momentum-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none;
+    @apply inline-flex items-center justify-center min-w-9 h-9 px-3 text-sm font-medium rounded-lg transition-all duration-150 select-none border border-slate-200 bg-white text-text-subtext hover:bg-slate-50 hover:text-accent-forest-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-sky disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none;
   }
 
   .pagination-item-active {
-    @apply border-momentum-500 hover:border-momentum-700 font-semibold shadow-xs;
+    @apply border-accent-forest hover:border-accent-forest-dark font-semibold shadow-xs;
   }
 
   .pagination-ellipsis {
-    @apply inline-flex items-center justify-center px-2 text-momentum-neutral-400 select-none;
+    @apply inline-flex items-center justify-center px-2 text-slate-400 select-none;
   }
 }

@@ -20,7 +20,7 @@
   }
 
   .spinner-primary {
-    @apply text-momentum-500;
+    @apply text-accent-forest;
   }
 
   .spinner-white {

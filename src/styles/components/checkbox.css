@@ -17,15 +17,15 @@
 
   .checkbox-box {
     @apply flex items-center justify-center border bg-white transition-all duration-150;
-    @apply border-momentum-orange-500; 
+    @apply border-accent-orange-dark; 
   }
 
   .checkbox-input:hover:not(:disabled) ~ .checkbox-box {
-    @apply border-momentum-orange-500;
+    @apply border-accent-orange-dark;
   }
 
   .checkbox-input:focus-visible ~ .checkbox-box {
-    @apply ring-2 ring-momentum-300 ring-offset-1;
+    @apply ring-2 ring-accent-olive ring-offset-1;
   }
 
   .checkbox-input:checked ~ .checkbox-box,

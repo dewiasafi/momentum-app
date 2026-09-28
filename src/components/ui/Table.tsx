@@ -88,10 +88,22 @@ export function Table<T>({
   ...props
 }: TableProps<T>) {
   const getRowKey = (record: T, index: number): string | number => {
+    let key: string | number | undefined;
+
     if (typeof rowKey === "function") {
-      return rowKey(record);
+      key = rowKey(record);
+    } else {
+      key = record[rowKey] as unknown as string | number;
     }
-    return (record[rowKey] as unknown as string | number) ?? index;
+
+    if (key === undefined || key === null) {
+      console.warn(
+        `[Table Warning]: Properti rowKey "${String(rowKey)}" tidak ditemukan pada record data. Harap gunakan key yang unik (misal: 'id'). Fallback ke index sementara...`
+      );
+      return index; 
+    }
+
+    return key;
   };
 
   const handleSort = (column: ColumnType<T>) => {
@@ -149,7 +161,7 @@ export function Table<T>({
                         : undefined
                     }
                   >
-                    {/* Bungkus konten header agar mewarisi warna teks dengan sempurna */}
+
                     <div className={`inline-flex items-center gap-1.5 w-full text-inherit ${col.align === "right" ? "justify-end" : col.align === "center" ? "justify-center" : "justify-start"}`}>
                       <span className="text-inherit">{col.title}</span>
                       {isSortable && (
@@ -178,16 +190,16 @@ export function Table<T>({
           <tbody className="table-body">
             {loading ? (
               <tr className="table-body-row">
-                <td colSpan={columns.length} className="px-6 py-12 text-center text-momentum-neutral-500">
+                <td colSpan={columns.length} className="px-6 py-12 text-center text-text-subtext">
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-momentum-500 border-t-transparent" />
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-forest border-t-transparent" />
                     <span>Memuat data...</span>
                   </div>
                 </td>
               </tr>
             ) : dataSource.length === 0 ? (
               <tr className="table-body-row">
-                <td colSpan={columns.length} className="px-6 py-12 text-center text-momentum-neutral-500">
+                <td colSpan={columns.length} className="px-6 py-12 text-center text-text-subtext">
                   {emptyText}
                 </td>
               </tr>
@@ -234,8 +246,8 @@ export function Table<T>({
           <div className="pagination-info">
             {pagination.currentPage && (
               <span>
-                Halaman <strong className="text-momentum-neutral-800">{pagination.currentPage}</strong> dari{" "}
-                <strong className="text-momentum-neutral-800">{pagination.totalPages}</strong>
+                Halaman <strong className="text-text-title">{pagination.currentPage}</strong> dari{" "}
+                <strong className="text-text-title">{pagination.totalPages}</strong>
               </span>
             )}
           </div>

@@ -1,33 +1,50 @@
 @layer components {
-  .card {
-    @apply bg-white border border-neutral-200 rounded-lg;
+  .card-container {
+    @apply bg-white border border-accent-olive/30 rounded-2xl overflow-hidden shadow-sm flex flex-col transition-all duration-200 hover:shadow-md;
+  }
+  
+  .card-header-wrapper {
+    @apply flex items-center justify-between px-5 py-4 border-b border-[#E8E6E1] min-h-[56px] bg-[#FDFBF2]/50;
   }
 
-  .card-padding-none { @apply p-0; }
-  .card-padding-sm { @apply p-4; }
-  .card-padding-md { @apply p-6; }
-  .card-padding-lg { @apply p-8; }
-
-  .card-shadow-sm { @apply shadow-sm; }
-  .card-shadow-md { @apply shadow-md; }
-
-  .card-hoverable {
-    @apply transition-shadow cursor-pointer hover:shadow-md;
+  .card-title-text {
+    @apply font-semibold text-text-title text-base;
   }
 
-  .card-header {
-    @apply flex items-start justify-between gap-4 pb-4 mb-4 border-b border-neutral-200;
+  .card-extra-text {
+    @apply text-sm font-medium text-[#59802C];
   }
 
-  .card-title {
-    @apply text-base font-semibold text-neutral-700;
+  .card-body {
+    @apply p-5 flex-1;
   }
 
-  .card-subtitle {
-    @apply text-sm text-neutral-500 mt-0.5;
+  .card-actions-wrapper {
+    @apply flex border-t border-[#E8E6E1] bg-[#FDFBF2]/30;
   }
 
-  .card-footer {
-    @apply flex items-center justify-end gap-2 pt-4 mt-4 border-t border-neutral-200;
+  .card-action-item {
+    @apply flex-1 flex justify-center items-center py-3 text-text-subtext hover:text-[#59802C] hover:bg-[#FDFBF2] cursor-pointer transition-colors;
+  }
+
+  .card-action-item-bordered {
+    @apply border-r border-[#E8E6E1];
+  }
+
+
+  .card-meta {
+    @apply flex gap-4 items-start;
+  }
+
+  .card-meta-title {
+    @apply font-medium text-text-title text-sm mb-1;
+  }
+
+  .card-meta-description {
+    @apply text-text-subtext text-sm;
+  }
+
+  .card-grid {
+    @apply p-6 border-r border-b border-[#E8E6E1] w-full md:w-1/3 float-left hover:shadow-md transition-shadow duration-300 bg-white;
   }
 }

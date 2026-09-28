@@ -1,5 +1,47 @@
 @import "tailwindcss";
 
-@import "./foundation.css";
 @import "./components.css";
 @import "./utilities.css";
+
+@theme {
+  /* Chamomile Theme Palette */
+  --color-page-bg: #F1F1E1;           /* Cream / Off-white background */
+
+  --color-card-bg: #FFFFFF;
+  --color-card-border: #E5E7EB;
+
+  /* Accent Colors (Chamomile) */
+  --color-accent-forest: #275900;      /* Primary Forest Green */
+  --color-accent-forest-dark: #1C4200; /* Forest Green Dark (Active) */
+  --color-accent-olive: #5E8706;       /* Olive Green (Hover/Secondary) */
+  --color-accent-yellow: #F0CC00;      /* Daisy Yellow (Highlight/Focus Ring) */
+  --color-accent-sky: #016CCE;         /* Sky Blue (Secondary Accent) */
+  --color-accent-orange: #FFF7ED;
+  --color-accent-orange-dark: #FA990F;
+
+
+  /* Aliases agar komponen yang sudah menggunakan nama lama tidak break */
+  --color-accent-text: var(--color-accent-forest);
+  --color-accent-bg: var(--color-accent-forest);
+  --color-accent-border: var(--color-accent-olive);
+  --color-accent-gold: var(--color-accent-yellow);
+
+  /* Typography Colors */
+  --color-text-title: #1E293B;
+  --color-text-subtext: #64748B;
+
+   --color-momentum-success: #52C41A;
+  --color-momentum-success-bg: #F6FFED;
+
+  --color-momentum-warning: #FAAD14;
+  --color-momentum-warning-bg: #FFFBE6;
+
+  --color-momentum-error: #FF4D4F;
+  --color-momentum-error-bg: #FFF1F0;
+
+  --color-momentum-info: #1890FF;
+  --color-momentum-info-bg: #E6F7FF;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05);
+}

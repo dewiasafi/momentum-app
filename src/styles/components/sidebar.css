@@ -1,0 +1,34 @@
+@layer components {
+
+  .sidebar-item {
+    @apply flex items-center w-full rounded-xl transition-all duration-150 text-left cursor-pointer select-none;
+  }
+
+  .sidebar-item-default {
+    @apply text-slate-700 bg-transparent hover:bg-page-bg hover:text-accent-forest;
+  }
+  
+  .sidebar-item-active {
+    @apply bg-accent-forest/10 text-accent-forest font-semibold;
+  }
+
+  .sidebar-item-expanded {
+    @apply justify-between px-3 py-2;
+  }
+  
+  .sidebar-item-collapsed {
+    @apply justify-center px-0 py-2.5;
+  }
+
+  .sidebar-container {
+    @apply h-screen bg-card-bg border-r border-card-border flex flex-col justify-between transition-all duration-300 py-4 relative;
+  }
+
+  .sidebar-header {
+    @apply flex items-center transition-all duration-300;
+  }
+
+  .sidebar-profile {
+    @apply bg-page-bg/60 rounded-2xl border border-slate-200/60 transition-all duration-300 flex items-center;
+  }
+}

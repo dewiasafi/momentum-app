@@ -14,7 +14,7 @@
   .progress-lg { @apply h-3; }
  
   /* Warna fill — narik dari token semantik, konsisten sama Alert/Badge */
-  .progress-fill-primary { @apply bg-momentum-500; }
+  .progress-fill-primary { @apply bg-accent-forest; }
   .progress-fill-success { background-color: var(--color-success); }
   .progress-fill-warning { background-color: var(--color-warning); }
   .progress-fill-error { background-color: var(--color-error); }
