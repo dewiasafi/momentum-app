@@ -41,8 +41,8 @@ const SIDEBAR_ITEMS: NavItem[] = [
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
      return (
-          <div className="flex h-dvh w-screen overflow-hidden text-text-title font-sans bg-page-bg">
-              <Sidebar items={SIDEBAR_ITEMS}/>
+          <div className="flex h-dvh w-screen overflow-hidden text-text-title font-sans bg-app-bg">
+               <Sidebar items={SIDEBAR_ITEMS}/>
 
                <main className="flex-1 overflow-y-auto p-6">
                     {children}
