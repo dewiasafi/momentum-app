@@ -4,18 +4,42 @@
 @import "./utilities.css";
 
 @theme {
+  --color-app-bg: #F7F6EE;
+  --color-app-sage: #B7D7A8;
+  --color-app-mint: #9FCCB0;
+  --color-app-eucalyptus: #7BAE8F;
+  --color-app-seafoam: #6DB6A6;
+  --color-app-sunshine: #F8D92E;
+  --color-app-brown: #4A3525;
+  --color-app-moss: #8FAE6E;
+  --color-app-olive: #6D7F44;
+  --color-app-leaf: #4E6336;
+  --color-app-forest: #2E4A2F;
+
+  --color-app-title: #233024;
+  --color-app-body: #3B4B3C;
+  --color-app-subtext: #64748B;
+  --color-app-disabled: #CBD5E1;
+
+
   /* Chamomile Theme Palette */
-  --color-page-bg: #F1F1E1;           /* Cream / Off-white background */
+  --color-page-bg: #F1F1E1;
+  /* Cream / Off-white background */
 
   --color-card-bg: #FFFFFF;
   --color-card-border: #E5E7EB;
 
   /* Accent Colors (Chamomile) */
-  --color-accent-forest: #275900;      /* Primary Forest Green */
-  --color-accent-forest-dark: #1C4200; /* Forest Green Dark (Active) */
-  --color-accent-olive: #5E8706;       /* Olive Green (Hover/Secondary) */
-  --color-accent-yellow: #F0CC00;      /* Daisy Yellow (Highlight/Focus Ring) */
-  --color-accent-sky: #016CCE;         /* Sky Blue (Secondary Accent) */
+  --color-accent-forest: #275900;
+  /* Primary Forest Green */
+  --color-accent-forest-dark: #1C4200;
+  /* Forest Green Dark (Active) */
+  --color-accent-olive: #5E8706;
+  /* Olive Green (Hover/Secondary) */
+  --color-accent-yellow: #F0CC00;
+  /* app Yellow (Highlight/Focus Ring) */
+  --color-accent-sky: #016CCE;
+  /* Sky Blue (Secondary Accent) */
   --color-accent-orange: #FFF7ED;
   --color-accent-orange-dark: #FA990F;
 
@@ -30,18 +54,24 @@
   --color-text-title: #1E293B;
   --color-text-subtext: #64748B;
 
-   --color-momentum-success: #52C41A;
-  --color-momentum-success-bg: #F6FFED;
+  --color-success: #52C41A;
+  --color-success-bg: #F6FFED;
 
-  --color-momentum-warning: #FAAD14;
-  --color-momentum-warning-bg: #FFFBE6;
+  --color-warning: #FAAD14;
+  --color-warning-bg: #FFFBE6;
 
-  --color-momentum-error: #FF4D4F;
-  --color-momentum-error-bg: #FFF1F0;
+  --color-error: #DC2626;
+  --color-error-bg: #FFF1F0;
 
-  --color-momentum-info: #1890FF;
-  --color-momentum-info-bg: #E6F7FF;
+  --color-info: #1890FF;
+  --color-info-bg: #E6F7FF;
 
   /* Shadows */
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+@layer components {
+  svg.lucide {
+    @apply w-4 h-4 stroke-[2] shrink-0;
+  }
 }

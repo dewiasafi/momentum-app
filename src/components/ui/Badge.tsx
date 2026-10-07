@@ -7,10 +7,14 @@ export type BadgeVariant =
   | "warning" 
   | "error" 
   | "info"
-  | "blue"
-  | "cyan"
-  | "orange"
-  | "yellow";
+  | "sage" 
+  | "mint" 
+  | "eucalyptus" 
+  | "seafoam"
+  | "moss"
+  | "olive"
+  | "sunshine"
+  | "leaf";
 
 export type BadgeSize = "sm" | "md" | "lg";
 
@@ -30,10 +34,14 @@ const VARIANT_CLASSES: Record<BadgeVariant, string> = {
      warning: "badge-warning",
      error: "badge-error",
      info: "badge-info",
-     blue: "badge-blue",
-     cyan: "badge-cyan",
-     orange: "badge-orange",
-     yellow: "badge-yellow",
+     sage: "badge-sage",
+     mint: "badge-mint",
+     eucalyptus: "badge-eucalyptus",
+     seafoam: "badge-seafoam",
+     sunshine:"badge-sunshine",
+     moss: "badge-moss",
+     olive: "badge-olive",
+     leaf: "badge-leaf",
 };
 
 const SIZE_CLASSES: Record<BadgeSize, string> = {

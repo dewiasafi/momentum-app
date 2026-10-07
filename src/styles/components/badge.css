@@ -1,65 +1,30 @@
 @layer components {
   .badge {
-    @apply inline-flex items-center gap-1.5 font-medium rounded-sm transition-colors select-none whitespace-nowrap;
+    @apply inline-flex items-center gap-1.5 font-semibold rounded-md border transition-colors select-none whitespace-nowrap;
   }
 
-  .badge-sm {
-    @apply px-2 py-1 text-[11px];
-  }
+  .badge-sm { @apply px-2 py-0.5 text-[10px]; }
+  .badge-md { @apply px-2.5 py-1 text-[11px]; }
+  .badge-lg { @apply px-3 py-1.5 text-xs; }
 
-  .badge-md {
-    @apply px-3 py-1.5 text-xs;
-  }
+  .badge-neutral    { @apply bg-slate-50 text-slate-500 border-slate-200/60; }
+  .badge-primary    { @apply bg-app-bg text-app-forest border-app-eucalyptus/30; }
+  
+  .badge-sage       { @apply bg-app-sage text-app-forest border-app-sage; }
+  .badge-mint       { @apply bg-app-mint text-app-forest border-app-mint; }
+  .badge-eucalyptus { @apply bg-app-eucalyptus text-white border-app-eucalyptus; }
+  .badge-seafoam    { @apply bg-app-seafoam text-white border-app-seafoam; }
+  
+  .badge-sunshine     { @apply bg-app-sunshine text-app-brown border-app-sunshine/40; }
+  .badge-moss       { @apply bg-app-moss text-white border-app-moss; }
+  .badge-olive      { @apply bg-app-olive text-white border-app-olive; }
+  .badge-leaf       { @apply bg-app-leaf text-white border-app-leaf; }
 
-  .badge-lg {
-    @apply px-4 py-2 text-sm;
-  }
-
-  .badge-neutral {
-    @apply bg-slate-100 text-text-subtext;
-  }
-
-  .badge-primary {
-    @apply bg-page-bg text-accent-forest-dark;
-  }
-
-  .badge-success {
-    @apply bg-momentum-success-bg text-momentum-success;
-  }
-
-  .badge-warning {
-    @apply bg-momentum-warning-bg text-momentum-warning;
-  }
-
-  .badge-error {
-    @apply bg-momentum-error-bg text-momentum-error;
-  }
-
-  .badge-info {
-    @apply bg-momentum-info-bg text-momentum-info;
-  }
-
-  .badge-blue {
-    @apply bg-accent-sky text-accent-sky;
-  }
-
-  .badge-cyan {
-    @apply bg-accent-sky text-accent-sky;
-  }
-
-  .badge-orange {
-    @apply bg-accent-orange text-accent-orange-dark;
-  }
-
-  .badge-yellow {
-    @apply bg-accent-yellow text-text-title;
-  }
-
-  .badge-dot {
-    @apply w-1.5 h-1.5 rounded-full bg-current shrink-0;
-  }
-
-  .badge-remove {
-    @apply inline-flex items-center justify-center p-0.5 rounded-full hover:bg-black/10 transition-colors cursor-pointer shrink-0 ml-0.5 -mr-1;
-  }
+  .badge-success    { @apply bg-emerald-50 text-emerald-700 border-emerald-200; }
+  .badge-warning    { @apply bg-app-sunshine/15 text-app-brown border-app-sunshine/40; }
+  .badge-error      { @apply bg-rose-50 text-rose-700 border-rose-200; }
+  .badge-info       { @apply bg-sky-50 text-sky-700 border-sky-200; }
+  
+  .badge-dot        { @apply w-1.5 h-1.5 rounded-full bg-current shrink-0; }
+  .badge-remove     { @apply inline-flex items-center justify-center p-0.5 rounded-full hover:bg-black/10 transition-colors cursor-pointer shrink-0 ml-0.5 -mr-1; }
 }

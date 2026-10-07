@@ -5,38 +5,59 @@
 
   .btn:disabled,
   .btn[aria-disabled="true"] {
-    @apply opacity-60 cursor-not-allowed pointer-events-none shadow-xs;
+    @apply opacity-50 cursor-not-allowed pointer-events-none shadow-none;
   }
 
   .btn-sm {
-    @apply px-3 py-1.5 text-xs font-semibold;
+    @apply px-2.5 py-1.5 text-xs font-semibold;
   }
 
   .btn-md {
-    @apply px-4 py-2 text-sm font-semibold;
+    @apply px-3.5 py-2 text-sm font-semibold;
   }
 
   .btn-lg {
-    @apply px-6 py-2.5 text-base font-semibold;
+    @apply px-4.5 py-2.5 text-base font-semibold;
   }
 
-  /* ---------- Primary ---------- */
+  .btn-lg svg.lucide {
+    @apply w-5 h-5;
+  }
+
+  .btn-sm svg.lucide {
+    @apply w-3.5 h-3.5;
+  }
+
   .btn-primary {
-    @apply bg-accent-forest text-white shadow-xs hover:bg-accent-olive active:bg-accent-forest-dark focus-visible:ring-accent-yellow;
+    @apply bg-app-forest text-white shadow-xs focus-visible:ring-app-sunshine;
   }
 
-  /* ---------- Secondary ---------- */
+  .btn-primary:not(:disabled):not([aria-disabled="true"]) {
+    @apply hover:bg-app-olive active:bg-app-title;
+  }
+
   .btn-secondary {
-    @apply bg-page-bg text-accent-forest border border-accent-forest/20 shadow-xs hover:bg-accent-olive/15 hover:border-accent-olive focus-visible:ring-accent-yellow;
+    @apply bg-app-sunshine/10 text-app-forest border border-app-forest/20 shadow-xs focus-visible:ring-app-sunshine;
   }
 
-  /* ---------- Danger ---------- */
+  .btn-secondary:not(:disabled):not([aria-disabled="true"]) {
+    @apply hover:bg-app-sunshine/25 hover:border-app-olive/40;
+  }
+
   .btn-danger {
-    @apply bg-red-600 text-white shadow-xs hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-500;
+    @apply bg-rose-600 text-white shadow-xs focus-visible:ring-rose-500;
   }
 
-  /* ---------- Ghost ---------- */
-  .btn-ghost {
-    @apply bg-transparent text-slate-700 hover:bg-page-bg hover:text-accent-forest focus-visible:ring-accent-yellow;
+  .btn-danger:not(:disabled):not([aria-disabled="true"]) {
+    @apply hover:bg-rose-700 active:bg-rose-800;
   }
+
+  .btn-ghost {
+    @apply bg-transparent text-app-subtext focus-visible:ring-app-sunshine;
+  }
+
+  .btn-ghost:not(:disabled):not([aria-disabled="true"]) {
+    @apply hover:bg-app-bg hover:text-app-title;
+  }
+
 }
