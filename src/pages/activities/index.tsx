@@ -1,8 +1,11 @@
+import ActivityCard from '@/features/activities/components/ActivityCard';
+import React from 'react'
 
-const ActivityPages = () => {
+const ActivityPage = () => {
+
   return (
-    <div>Activity Pages</div>
+    <ActivityCard />
   )
 }
 
-export default ActivityPages
+export default ActivityPage
