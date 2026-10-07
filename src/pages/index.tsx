@@ -4,6 +4,7 @@ import { Outlet, Route, Routes } from "react-router-dom";
 
 const DasboardPages = lazy(() => import("./dashboard"))
 const ActivityPages = lazy(() => import("./activities"))
+const FoundationPage = lazy(() => import("./foundation"))
 
 const PageLoader = () => (
      <div className="flex items-center justify-center h-full w-full min-h-75">
@@ -26,6 +27,7 @@ const AppRoutes = () => {
                          <Route path="/activities" element={<ActivityPages />} />
                          <Route path="/activities/reports/weekly" element={<ActivityPages />} />
                     </Route>
+                    <Route path="/" element={<FoundationPage/>}/>
                </Routes>
           </Suspense>
      )

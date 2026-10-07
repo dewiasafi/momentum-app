@@ -13,7 +13,7 @@ function Card({ className, children, title, extra, cover, actions, ...props }: C
   return (
     <div className={cardClasses} {...props}>
       {cover && (
-        <div className="w-full overflow-hidden">
+        <div className="w-full overflow-hidden border-b border-app-subtext/10">
           {cover}
         </div>
       )}

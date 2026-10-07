@@ -1,5 +1,5 @@
-import { Badge, Button } from '@/components/ui';
-import { Plus } from 'lucide-react';
+import { Badge, Button, Card } from '@/components/ui';
+import { CheckSquare, Edit3, Eye, Plus, Sparkles } from 'lucide-react';
 import React from 'react';
 
 function Foundation(): React.ReactElement {
@@ -132,7 +132,7 @@ function Foundation(): React.ReactElement {
                   <span className="text-xs font-medium text-app-subtext w-20">States:</span>
                   <Button variant="primary" loading>Loading State</Button>
                   <Button variant="primary" disabled>Disabled State</Button>
-                  <Button variant="secondary" leftIcon={<Plus/>}>With Left Icon</Button>
+                  <Button variant="secondary" leftIcon={<Plus />}>With Left Icon</Button>
                 </div>
 
                 {/* Pilihan Ukuran */}
@@ -148,6 +148,69 @@ function Foundation(): React.ReactElement {
           </div>
         </section>
 
+        <section className="bg-white border border-app-subtext/10 rounded-2xl shadow-sm p-6">
+          <h2 className="text-lg font-bold text-app-title mb-1">🎴 Atomic Components: Cards & Compound Structures</h2>
+          <p className="text-xs text-app-subtext mb-6">Interactive compound structure preview for tracking cards, modular dashboards, and grid modules.</p>
+
+          <div className="space-y-8">
+
+            {/* Contoh 1: Card Standar untuk Tracker Modul */}
+            <div>
+              <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-3">1. Module Standard Card</h3>
+              <div className="max-w-md">
+                <Card
+                  title="Daily Activity Tracker"
+                  extra={<span className="flex items-center gap-1">✨ AI Live</span>}
+                  actions={[
+                    <span key="view"><Eye /> View Details</span>,
+                    <span key="edit"><Edit3 /> Manage Tasks</span>
+                  ]}
+                >
+                  <Card.Meta
+                    avatar={
+                      <div className="w-8 h-8 rounded-full bg-app-eucalyptus/20 text-app-forest flex items-center justify-center font-bold text-xs">
+                        AT
+                      </div>
+                    }
+                    title="Overview Activity"
+                    description="Lacak performa belajar Tech English harian serta manajemen refactoring modul arsitektur microfrontend React milikmu."
+                  />
+                </Card>
+              </div>
+            </div>
+
+            {/* Contoh 2: Card Grid untuk Ringkasan Bento Layout (Bisa dipakai di Finance/Diary summary) */}
+            <div>
+              <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-3">2. Compound Card Grid Layout</h3>
+              <div className="overflow-hidden border border-app-subtext/15 rounded-xl bg-slate-50 flex flex-wrap">
+                <Card.Grid>
+                  <div className="flex items-center gap-2 mb-2 text-app-forest">
+                    <CheckSquare />
+                    <h4 className="text-xs font-bold uppercase tracking-wide">Tasks Completed</h4>
+                  </div>
+                  <p className="text-2xl font-extrabold text-app-title">18 / 24</p>
+                  <p className="text-[11px] text-app-subtext mt-1">75% velocity this week</p>
+                </Card.Grid>
+
+                <Card.Grid>
+                  <div className="flex items-center gap-2 mb-2 text-app-yellow-dark">
+                    <Sparkles />
+                    <h4 className="text-xs font-bold uppercase tracking-wide">AI Health Score</h4>
+                  </div>
+                  <p className="text-2xl font-extrabold text-app-title">9.4 <span className="text-xs font-medium text-app-subtext">/ 10</span></p>
+                  <p className="text-[11px] text-app-subtext mt-1">Productivity streak is excellent</p>
+                </Card.Grid>
+
+                <Card.Grid className="border-r-0!">
+                  <h4 className="text-xs font-bold text-app-subtext uppercase tracking-wide mb-2">Finance Overview</h4>
+                  <p className="text-xl font-extrabold text-app-title">Rp 850.000</p>
+                  <p className="text-[11px] text-app-leaf font-medium mt-2">📉 12% lower than last week</p>
+                </Card.Grid>
+              </div>
+            </div>
+
+          </div>
+        </section>
 
       </div>
     </div>

@@ -1,18 +1,18 @@
 @layer components {
   .card-container {
-    @apply bg-white border border-accent-olive/30 rounded-2xl overflow-hidden shadow-sm flex flex-col transition-all duration-200 hover:shadow-md;
+    @apply bg-white border border-app-sage/40 rounded-2xl overflow-hidden shadow-xs flex flex-col transition-all duration-200 hover:shadow-md;
   }
   
   .card-header-wrapper {
-    @apply flex items-center justify-between px-5 py-4 border-b border-[#E8E6E1] min-h-[56px] bg-[#FDFBF2]/50;
+    @apply flex items-center justify-between px-5 py-4 border-b border-app-subtext/15 min-h-14 bg-app-bg/30;
   }
 
   .card-title-text {
-    @apply font-semibold text-text-title text-base;
+    @apply font-bold text-app-title text-base tracking-tight;
   }
 
   .card-extra-text {
-    @apply text-sm font-medium text-[#59802C];
+    @apply text-xs font-semibold text-app-leaf;
   }
 
   .card-body {
@@ -20,15 +20,15 @@
   }
 
   .card-actions-wrapper {
-    @apply flex border-t border-[#E8E6E1] bg-[#FDFBF2]/30;
+    @apply flex border-t border-app-subtext/15 bg-app-bg/10;
   }
 
   .card-action-item {
-    @apply flex-1 flex justify-center items-center py-3 text-text-subtext hover:text-[#59802C] hover:bg-[#FDFBF2] cursor-pointer transition-colors;
+    @apply flex-1 flex justify-center items-center py-3 text-app-subtext hover:text-app-forest hover:bg-app-bg/40 cursor-pointer transition-colors text-xs font-medium gap-1.5;
   }
 
   .card-action-item-bordered {
-    @apply border-r border-[#E8E6E1];
+    @apply border-r border-app-subtext/15;
   }
 
 
@@ -37,14 +37,14 @@
   }
 
   .card-meta-title {
-    @apply font-medium text-text-title text-sm mb-1;
+    @apply font-semibold text-app-title text-sm mb-1;
   }
 
   .card-meta-description {
-    @apply text-text-subtext text-sm;
+    @apply text-app-subtext text-xs leading-relaxed;
   }
 
   .card-grid {
-    @apply p-6 border-r border-b border-[#E8E6E1] w-full md:w-1/3 float-left hover:shadow-md transition-shadow duration-300 bg-white;
+    @apply p-6 border-r border-b border-app-subtext/15 w-full md:w-1/3 float-left hover:shadow-md transition-shadow duration-300 bg-white;
   }
 }

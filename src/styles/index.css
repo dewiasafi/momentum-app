@@ -72,6 +72,6 @@
 
 @layer components {
   svg.lucide {
-    @apply w-4 h-4 stroke-[2] shrink-0;
+    @apply w-4 h-4 stroke-2 shrink-0;
   }
 }
