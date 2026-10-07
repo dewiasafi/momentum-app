@@ -1,7 +1,8 @@
 import { Badge, Button } from '@/components/ui';
+import { Plus } from 'lucide-react';
 import React from 'react';
 
-function FoundationPages(): React.ReactElement {
+function Foundation(): React.ReactElement {
   const colorTokens = [
     { name: 'app-bg', bgClass: 'bg-app-bg', hex: '#F7F6EE', desc: 'Main Application Background' },
     { name: 'app-sage', bgClass: 'bg-app-sage', hex: '#B7D7A8', desc: 'Soft Border & Soft Accent' },
@@ -44,7 +45,6 @@ function FoundationPages(): React.ReactElement {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {colorTokens.map((color) => (
               <div key={color.name} className="flex items-center gap-3 p-3 border border-app-subtext/5 rounded-xl bg-app-bg/20">
-                {/* Kotak warna mengonsumsi token kelas baru kamu */}
                 <div className={`w-12 h-12 rounded-lg border border-app-subtext/10 shadow-inner shrink-0 ${color.bgClass}`} />
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-app-title font-mono">--color-{color.name}</p>
@@ -109,15 +109,12 @@ function FoundationPages(): React.ReactElement {
           </div>
         </section>
 
-        {/* Sambungan di bawah SECTION 3 dalam file FoundationPages.tsx */}
-
         {/* SECTION 4: ATOMIC COMPONENTS (BUTTONS) */}
         <section className="bg-white border border-app-subtext/10 rounded-2xl shadow-sm p-6">
           <h2 className="text-lg font-bold text-app-title mb-1">🎛️ Atomic Components: Buttons</h2>
           <p className="text-xs text-app-subtext mb-6">Interactive preview of the TypeScript reusable Button component mapped to v4 variants.</p>
 
           <div className="space-y-6">
-            {/* Varian Warna/Fungsi */}
             <div>
               <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-3">Button Variants</h3>
               <div className="flex flex-wrap items-center gap-3">
@@ -128,16 +125,14 @@ function FoundationPages(): React.ReactElement {
               </div>
             </div>
 
-            {/* State Tambahan & Ukuran */}
             <div>
               <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-3">States & Sizes</h3>
               <div className="space-y-4">
-                {/* State Loading & Disabled */}
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="text-xs font-medium text-app-subtext w-20">States:</span>
                   <Button variant="primary" loading>Loading State</Button>
                   <Button variant="primary" disabled>Disabled State</Button>
-                  <Button variant="secondary" leftIcon={<span>➕</span>}>With Left Icon</Button>
+                  <Button variant="secondary" leftIcon={<Plus/>}>With Left Icon</Button>
                 </div>
 
                 {/* Pilihan Ukuran */}
@@ -159,4 +154,4 @@ function FoundationPages(): React.ReactElement {
   );
 }
 
-export default FoundationPages
+export default Foundation
