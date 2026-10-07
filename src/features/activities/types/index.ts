@@ -1,28 +1,16 @@
-export type Priority = 'low' | 'medium' | 'high';
-
+export type ActivityPriority = 'low' | 'medium' | 'high';
+export type ActivityCategory = 'Learning' | 'Work' | 'Household' | 'General' | string;
 export interface Activity {
   id: string;
   title: string;
   notes: string;
   is_completed: boolean;
-  category: string;
-  priority: Priority;
+  category: ActivityCategory;
+  priority: ActivityPriority;
   estimated_minutes: number;
   created_at: string;
   completed_at: string | null;
 }
-
-export interface ActivityResponse {
-  message: string;
-  data: {
-    items: Activity[];
-    limit: number;
-    page: number;
-    total_items: number;
-    total_pages: number;
-  };
-}
-
 export interface ActivityFilterParams {
   page?: number;
   limit?: number;
@@ -44,7 +32,7 @@ export interface PaginatedData<T> {
   total_page: number;
 }
 
-export interface ApiResponse<T> {
+export interface ActivityResponse<T> {
   message?: string;
   data: PaginatedData<T>;
 }
@@ -53,7 +41,7 @@ export interface ActivityFormData {
   title: string;
   notes: string;
   category: string;
-  priority: Priority;
+  priority: ActivityPriority;
   estimated_minutes: number;
   is_completed: boolean;
 }
