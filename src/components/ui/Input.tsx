@@ -1,27 +1,28 @@
 import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
 import { getFieldClassName, type FieldVariants } from "./field.styles";
-import FormField from "./FormField";
+import FormField, { AlignLabel } from "./FormField";
 
 export interface InputProps
      extends Omit<InputHTMLAttributes<HTMLInputElement>, "size">,
      FieldVariants {
      label?: string;
+     alignLabel?: AlignLabel;
      helperText?: string;
      errorText?: string;
      fullWidth?: boolean;
      leftIcon?: ReactNode;
      rightIcon?: ReactNode;
      containerClassName?: string;
-
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
      (
           {
                label,
+               alignLabel = "vertical",
                helperText,
                errorText,
-               size,
+               size = "md",
                fullWidth = false,
                disabled = false,
                leftIcon = null,
@@ -43,11 +44,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                     errorText={errorText}
                     fullWidth={fullWidth}
                     className={containerClassName}
+                    align={alignLabel}
                >
                     {(id, describedBy) => (
-                         <div className="relative flex items-center">
+                         <div className="relative flex items-center w-full">
                               {leftIcon && (
-                                   <span className="absolute left-3 inset-y-0 flex items-center text-neutral-400 pointer-events-none">
+                                   <span className="absolute left-3 inset-y-0 flex items-center text-app-subtext pointer-events-none z-10">
                                         {leftIcon}
                                    </span>
                               )}
@@ -61,13 +63,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                                    className={getFieldClassName({
                                         size,
                                         error: hasError,
-                                        className: [leftIcon ? "pl-9" : "", rightIcon ? "pr-9" : "", className]
+                                        className: [
+                                             leftIcon ? "pl-9" : "", 
+                                             rightIcon ? "pr-9" : "", 
+                                             className
+                                        ]
                                              .filter(Boolean).join(" ")
                                    })}
                                    {...props}
                               />
                               {rightIcon && (
-                                   <span className="absolute right-3 inset-y-0 flex items-center text-neutral-400 pointer-events-none">
+                                   <span className="absolute right-3 inset-y-0 flex items-center text-app-subtext pointer-events-none z-10">
                                         {rightIcon}
                                    </span>
                               )}

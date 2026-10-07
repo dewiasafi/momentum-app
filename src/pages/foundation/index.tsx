@@ -1,5 +1,5 @@
-import { Badge, Button, Card } from '@/components/ui';
-import { CheckSquare, Edit3, Eye, Plus, Sparkles } from 'lucide-react';
+import { Badge, Button, Card, Input, Select } from '@/components/ui';
+import { Briefcase, CheckSquare, Edit3, Eye, Mail, Plus, Search, Sparkles } from 'lucide-react';
 import React from 'react';
 
 function Foundation(): React.ReactElement {
@@ -212,6 +212,104 @@ function Foundation(): React.ReactElement {
           </div>
         </section>
 
+        <section className="bg-white border border-app-subtext/10 rounded-2xl shadow-sm p-6">
+          <h2 className="text-lg font-bold text-app-title mb-1">🎛️ Form Components: Select Fields</h2>
+          <p className="text-xs text-app-subtext mb-6">Testing vertical and inline horizontal alignment options for form layouts.</p>
+
+          <div className="space-y-6 max-w-md">
+
+            {/* Contoh 1: Layout Vertikal Standar */}
+            <div>
+              <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-3">1. Standard Vertical Layout</h3>
+              <Select
+                label="Category Type"
+                placeholder="Choose active module..."
+                options={[
+                  { label: '💼 Work Management', value: 'work' },
+                  { label: '🎓 Tech Learning', value: 'learning' },
+                  { label: '🏠 Household Notes', value: 'household' }
+                ]}
+                helperText="Select the primary group for task isolation."
+                fullWidth
+              />
+            </div>
+
+            {/* Contoh 2: Layout Horizontal / Inline (Opsi yang kamu inginkan) */}
+            <div className="pt-4 border-t border-slate-50">
+              <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-4">2. Inline Horizontal Layout (Label Side-by-Side)</h3>
+              <Select
+                label="Priority Level"
+                alignLabel="horizontal"
+                leftIcon={<Briefcase />}
+                options={[
+                  { label: 'High Priority (Leaf)', value: 'high' },
+                  { label: 'Medium Priority (Yellow)', value: 'medium' },
+                  { label: 'Low Priority (Sage)', value: 'low' }
+                ]}
+                fullWidth
+              />
+            </div>
+
+            {/* Contoh 3: State Error Fungsional */}
+            <div className="pt-4 border-t border-slate-50">
+              <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-3">3. Error Validation State</h3>
+              <Select
+                label="Required Option"
+                required
+                errorText="Please select an option before proceeding to push to GitHub repository."
+                options={[
+                  { label: 'Production Ready', value: 'prod' }
+                ]}
+                fullWidth
+              />
+            </div>
+
+          </div>
+        </section>
+
+        <section className="bg-white border border-app-subtext/10 rounded-2xl shadow-sm p-6">
+          <h2 className="text-lg font-bold text-app-title mb-1">⌨️ Form Components: Text Input Fields</h2>
+          <p className="text-xs text-app-subtext mb-6">Testing reusable custom inputs with icon anchors and text layouts.</p>
+
+          <div className="space-y-6 max-w-md">
+
+            {/* Contoh 1: Input Standar dengan Left Icon */}
+            <div>
+              <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-3">1. Input with Left Icon (Vertical)</h3>
+              <Input
+                label="Search Activities"
+                placeholder="Type here..."
+                leftIcon={<Search />}
+                fullWidth
+              />
+            </div>
+
+            {/* Contoh 2: Layout Inline Horizontal (Opsi khusus) */}
+            <div className="pt-4 border-t border-slate-50">
+              <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-4">2. Inline Horizontal Layout</h3>
+              <Input
+                label="Email Address"
+                alignLabel="horizontal"
+                placeholder="your-name@domain.com"
+                leftIcon={<Mail />}
+                fullWidth
+              />
+            </div>
+
+            {/* Contoh 3: State Error Validasi */}
+            <div className="pt-4 border-t border-slate-50">
+              <h3 className="text-xs font-bold text-app-title uppercase tracking-wider mb-3">3. Input Error State</h3>
+              <Input
+                label="Account Token"
+                required
+                errorText="Token has expired. Please verify your custom server configurations."
+                placeholder="Enter API token..."
+                fullWidth
+              />
+            </div>
+
+          </div>
+        </section>
       </div>
     </div>
   );

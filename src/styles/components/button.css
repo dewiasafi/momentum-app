@@ -45,7 +45,7 @@
   }
 
   .btn-danger {
-    @apply bg-rose-600 text-white shadow-xs focus-visible:ring-rose-500;
+    @apply bg-rose-600 text-white shadow-xs focus-visible:ring-app-error;
   }
 
   .btn-danger:not(:disabled):not([aria-disabled="true"]) {

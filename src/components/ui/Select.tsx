@@ -1,6 +1,7 @@
 import { forwardRef, ReactNode, SelectHTMLAttributes } from "react";
+import { ChevronDown } from "lucide-react";
 import { type FieldVariants, getFieldClassName } from "./field.styles";
-import FormField from "./FormField";
+import FormField, { AlignLabel } from "./FormField";
 
 export interface SelectOption {
      label: string;
@@ -12,6 +13,7 @@ export interface SelectProps
      extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "size">,
      FieldVariants {
      label?: string;
+     alignLabel?: AlignLabel;
      helperText?: string;
      errorText?: string;
      fullWidth?: boolean;
@@ -27,7 +29,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                label,
                helperText,
                errorText,
-               size,
+               size = "md",
                fullWidth = false,
                disabled = false,
                placeholder,
@@ -36,6 +38,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                className = "",
                containerClassName = "",
                required,
+               alignLabel = "vertical",
                ...props
           },
           ref
@@ -50,11 +53,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     errorText={errorText}
                     fullWidth={fullWidth}
                     className={containerClassName}
+                    align={alignLabel}
                >
                     {(id, describedBy) => (
-                         <div className="relative flex items-center">
+                         <div className="relative flex items-center w-full">
                               {leftIcon && (
-                                   <span className="absolute left-3 inset-y-0 flex items-center text-neutral-400 pointer-events-none z-10">
+                                   <span className="absolute left-3 inset-y-0 flex items-center text-app-subtext pointer-events-none z-10">
                                         {leftIcon}
                                    </span>
                               )}
@@ -70,12 +74,10 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                                         size,
                                         error: hasError,
                                         className: [
-                                             "appearance-none pr-9 cursor-pointer",
+                                             "appearance-none pr-10 cursor-pointer",
                                              leftIcon ? "pl-9" : "",
                                              className,
-                                        ]
-                                             .filter(Boolean)
-                                             .join(" "),
+                                        ].filter(Boolean).join(" "),
                                    })}
                                    {...props}
                               >
@@ -92,18 +94,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
                                    ))}
                               </select>
 
-                              <span className="absolute right-3 inset-y-0 flex items-center text-neutral-400 pointer-events-none">
-                                   <svg
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        aria-hidden="true"
-                                   >
-                                        <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                                   </svg>
+                              <span className="absolute right-3 inset-y-0 flex items-center text-app-subtext pointer-events-none">
+                                   <ChevronDown />
                               </span>
                          </div>
                     )}

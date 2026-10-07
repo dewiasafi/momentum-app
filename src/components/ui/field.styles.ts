@@ -10,23 +10,22 @@ interface FieldVariantsInput extends FieldVariants {
 }
 
 const BASE_CLASSES =
-     "w-full font-sans text-neutral-900 bg-white rounded-md border " +
-     "transition-colors duration-75 placeholder:text-neutral-400 " +
-     "focus:outline-none focus:ring-2 focus:ring-offset-0 " +
-     "disabled:bg-neutral-100 disabled:text-neutral-400 disabled:border-neutral-200 disabled:cursor-not-allowed";
+     "w-full font-sans text-app-body bg-white rounded-lg border transition-all duration-150 " +
+     "placeholder:text-app-subtext/50 focus:outline-none focus:ring-2 focus:ring-offset-0 " +
+     "disabled:bg-app-bg/50 disabled:text-app-disabled disabled:border-app-subtext/10 disabled:cursor-not-allowed";
 
 const SIZE_CLASSES: Record<FieldSize, string> = {
-     sm: "px-3 py-1.5 text-sm",
-     md: "px-3.5 py-[9px] text-base",
-     lg: "px-4 py-2.5 text-lg",
-}
+     sm: "px-3 py-1.5 text-xs",
+     md: "px-3.5 py-2 text-sm",
+     lg: "px-4 py-2.5 text-base",
+};
 
-const ERROR_CLASSES = "border-error focus:border-error focus:ring-error/20"
+const ERROR_CLASSES = "border-rose-300 focus:border-app-error focus:ring-app-error/20";
 
 const DEFAULT_CLASSES =
-     "border-neutral-300 " +
-     "[&:hover:not(:disabled):not(:focus)]:border-neutral-400 " +
-     "focus:border-primary-500 focus:ring-primary-300";
+     "border-app-subtext/20 " +
+     "[&:hover:not(:disabled):not(:focus)]:border-app-subtext/40 " +
+     "focus:border-app-eucalyptus focus:ring-app-eucalyptus/20";
 
 export function getFieldClassName({
      size = "md",

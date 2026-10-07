@@ -30,7 +30,7 @@
 
   .checkbox-input:checked ~ .checkbox-box,
   .checkbox-input:indeterminate ~ .checkbox-box {
-    @apply bg-momentum-success border-momentum-success;
+    @apply bg-success border-success;
   }
 
   .checkbox-input:disabled ~ .checkbox-box {
