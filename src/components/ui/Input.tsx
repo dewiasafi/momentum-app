@@ -73,7 +73,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                                    {...props}
                               />
                               {rightIcon && (
-                                   <span className="absolute right-3 inset-y-0 flex items-center text-app-subtext pointer-events-none z-10">
+                                   <span className="absolute right-3 inset-y-0 flex items-center text-app-subtext z-10 cursor-pointer">
                                         {rightIcon}
                                    </span>
                               )}
