@@ -1,5 +1,6 @@
 export type ActivityPriority = 'low' | 'medium' | 'high';
 export type ActivityCategory = 'Learning' | 'Work' | 'Household' | 'General' | string;
+
 export interface Activity {
   id: string;
   title: string;
@@ -10,6 +11,8 @@ export interface Activity {
   estimated_minutes: number;
   created_at: string;
   completed_at: string | null;
+  module?: string;
+  icon_name?: string;
 }
 export interface ActivityFilterParams {
   page?: number;
@@ -44,6 +47,7 @@ export interface ActivityFormData {
   priority: ActivityPriority;
   estimated_minutes: number;
   is_completed: boolean;
+  module?: string;
 }
 
 export interface PaginationMeta {

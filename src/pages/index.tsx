@@ -27,7 +27,7 @@ const AppRoutes = () => {
                          <Route path="/activities" element={<ActivityPages />} />
                          <Route path="/activities/reports/weekly" element={<ActivityPages />} />
                     </Route>
-                    <Route path="/" element={<FoundationPage/>}/>
+                    <Route path="/foundations-app" element={<FoundationPage/>}/>
                </Routes>
           </Suspense>
      )
