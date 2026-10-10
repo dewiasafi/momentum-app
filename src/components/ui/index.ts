@@ -26,3 +26,4 @@ export { default as Tabs } from './Tabs';
 export { default as Textarea } from './Textarea';
 export { default as Tooltip } from './Tooltip';
 export { default as Header} from "./Header";
+export { default as Pagination} from "./Pagination"

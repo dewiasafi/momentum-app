@@ -1,5 +1,5 @@
 import { ReactNode, HTMLAttributes, CSSProperties } from "react";
-import { Pagination, PaginationProps } from "./Pagination";
+import Pagination, { PaginationProps } from "./Pagination";
 
 export type SortDirection = "asc" | "desc" | null;
 
