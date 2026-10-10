@@ -17,6 +17,7 @@ export interface DrawerProps {
   side?: DrawerSide;
   closeOnBackdropClick?: boolean;
   closeOnEscape?: boolean;
+  className?: string;
 }
 
 const SIDE_CLASSES: Record<DrawerSide, string> = {
@@ -35,6 +36,7 @@ function Drawer({
   side = "right",
   closeOnBackdropClick = true,
   closeOnEscape = true,
+  className = "",
 }: DrawerProps) {
   // `shouldRender` tetap true selama animasi exit berlangsung, biar
   // drawer nggak ilang instan pas ditutup — beda dari Modal yang
@@ -117,7 +119,8 @@ function Drawer({
           "drawer-panel",
           SIDE_CLASSES[side],
           visible ? "drawer-visible" : "drawer-enter",
-        ].join(" ")}
+          className,
+        ].filter(Boolean).join(" ")}
         onKeyDown={handleKeyDown}
       >
         {children}

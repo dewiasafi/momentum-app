@@ -4,7 +4,7 @@
   }
 
   .dropdown-panel {
-    @apply absolute z-50 mt-2 min-w-45 bg-white border border-neutral-200 rounded-lg shadow-md py-1;
+    @apply absolute z-50 mt-12 min-w-45 bg-white border border-neutral-200 rounded-lg shadow-md py-1;
   }
 
   .dropdown-panel-left {
