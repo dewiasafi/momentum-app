@@ -4,26 +4,24 @@ export type ProgressSize = "sm" | "md" | "lg";
 export type ProgressColor = "primary" | "success" | "warning" | "error";
 
 export interface ProgressProps extends Omit<HTMLAttributes<HTMLDivElement>, "color"> {
-  /** 0–100 */
   value: number;
   size?: ProgressSize;
   color?: ProgressColor;
   label?: string;
-  /** nampilin angka persen di kanan label — cuma kepakai kalau `label` diisi */
   showValue?: boolean;
 }
 
-const SIZE_CLASSES: Record<ProgressSize, string> = {
-  sm: "progress-sm",
-  md: "progress-md",
-  lg: "progress-lg",
+const SIZE_STYLES: Record<ProgressSize, string> = {
+  sm: "h-1.5",
+  md: "h-2",
+  lg: "h-3",
 };
 
-const COLOR_CLASSES: Record<ProgressColor, string> = {
-  primary: "progress-fill-primary",
-  success: "progress-fill-success",
-  warning: "progress-fill-warning",
-  error: "progress-fill-error",
+const COLOR_STYLES: Record<ProgressColor, string> = {
+  primary: "bg-app-forest",
+  success: "bg-emerald-500",
+  warning: "bg-amber-500",
+  error: "bg-rose-500",
 };
 
 export default function Progress({
@@ -40,9 +38,9 @@ export default function Progress({
   return (
     <div className={className}>
       {label && (
-        <div className="progress-label-row">
-          <span className="progress-label">{label}</span>
-          {showValue && <span className="progress-value">{Math.round(clampedValue)}%</span>}
+        <div className="flex items-center justify-between mb-1.5 text-sm">
+          <span className="font-medium text-neutral-700">{label}</span>
+          {showValue && <span className="text-neutral-500">{Math.round(clampedValue)}%</span>}
         </div>
       )}
 
@@ -52,11 +50,11 @@ export default function Progress({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={!label ? "Progress" : undefined}
-        className={["progress-track", SIZE_CLASSES[size]].join(" ")}
+        className={`w-full bg-neutral-100 rounded-full overflow-hidden ${SIZE_STYLES[size]}`}
         {...props}
       >
         <div
-          className={["progress-fill", COLOR_CLASSES[color]].join(" ")}
+          className={`h-full rounded-full transition-[width] duration-300 ease-out ${COLOR_STYLES[color]}`}
           style={{ width: `${clampedValue}%` }}
         />
       </div>

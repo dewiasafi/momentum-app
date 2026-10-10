@@ -9,11 +9,23 @@ export interface TooltipProps {
   delay?: number;
 }
 
-const POSITION_CLASSES: Record<TooltipPosition, string> = {
-  top: "tooltip-top",
-  bottom: "tooltip-bottom",
-  left: "tooltip-left",
-  right: "tooltip-right",
+const POSITION_STYLES: Record<TooltipPosition, { bubble: string; arrow: string }> = {
+  top: {
+    bubble: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+    arrow: "-bottom-1 left-1/2 -translate-x-1/2",
+  },
+  bottom: {
+    bubble: "top-full left-1/2 -translate-x-1/2 mt-2",
+    arrow: "-top-1 left-1/2 -translate-x-1/2",
+  },
+  left: {
+    bubble: "right-full top-1/2 -translate-y-1/2 mr-2",
+    arrow: "-right-1 top-1/2 -translate-y-1/2",
+  },
+  right: {
+    bubble: "left-full top-1/2 -translate-y-1/2 ml-2",
+    arrow: "-left-1 top-1/2 -translate-y-1/2",
+  },
 };
 
 export default function Tooltip({ content, children, position = "top", delay = 300 }: TooltipProps) {
@@ -57,18 +69,20 @@ export default function Tooltip({ content, children, position = "top", delay = 3
     "aria-describedby": id,
   } as Record<string, unknown>);
 
+  const positionStyle = POSITION_STYLES[position];
+
   return (
-    <span className="tooltip-wrapper">
+    <span className="relative inline-flex">
       {trigger}
       <span
         role="tooltip"
         id={id}
-        className={["tooltip-bubble", POSITION_CLASSES[position], visible ? "tooltip-visible" : ""]
-          .filter(Boolean)
-          .join(" ")}
+        className={`absolute z-50 px-2.5 py-1.5 rounded-md bg-neutral-800 text-white text-xs font-medium whitespace-nowrap pointer-events-none transition-all duration-100 ${
+          positionStyle.bubble
+        } ${visible ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
       >
         {content}
-        <span className="tooltip-arrow" aria-hidden="true" />
+        <span className={`absolute w-2 h-2 bg-neutral-800 rotate-45 ${positionStyle.arrow}`} aria-hidden="true" />
       </span>
     </span>
   );

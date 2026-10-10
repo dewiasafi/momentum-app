@@ -20,16 +20,32 @@ export interface DrawerProps {
   className?: string;
 }
 
-const SIDE_CLASSES: Record<DrawerSide, string> = {
-  right: "drawer-right",
-  left: "drawer-left",
-  top: "drawer-top",
-  bottom: "drawer-bottom",
+const SIDE_STYLES: Record<DrawerSide, { base: string; enter: string; visible: string }> = {
+  right: {
+    base: "top-0 right-0 h-full w-full max-w-sm",
+    enter: "translate-x-full",
+    visible: "translate-x-0",
+  },
+  left: {
+    base: "top-0 left-0 h-full w-full max-w-sm",
+    enter: "-translate-x-full",
+    visible: "translate-x-0",
+  },
+  bottom: {
+    base: "bottom-0 left-0 w-full max-h-[85vh] rounded-t-xl",
+    enter: "translate-y-full",
+    visible: "translate-y-0",
+  },
+  top: {
+    base: "top-0 left-0 w-full max-h-[85vh] rounded-b-xl",
+    enter: "-translate-y-full",
+    visible: "translate-y-0",
+  },
 };
 
-const EXIT_DURATION = 200; // samain sama duration-200 di CSS
+const EXIT_DURATION = 200;
 
-function Drawer({
+export function Drawer({
   open,
   onClose,
   children,
@@ -38,9 +54,6 @@ function Drawer({
   closeOnEscape = true,
   className = "",
 }: DrawerProps) {
-  // `shouldRender` tetap true selama animasi exit berlangsung, biar
-  // drawer nggak ilang instan pas ditutup — beda dari Modal yang
-  // langsung unmount tanpa animasi
   const [shouldRender, setShouldRender] = useState(open);
   const [visible, setVisible] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -103,24 +116,23 @@ function Drawer({
 
   if (!shouldRender) return null;
 
+  const sideStyle = SIDE_STYLES[side];
+
   return createPortal(
     <>
       <div
-        className={["drawer-backdrop", visible ? "drawer-backdrop-visible" : "drawer-backdrop-enter"].join(
-          " "
-        )}
+        className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-200 ${
+          visible ? "opacity-100" : "opacity-0"
+        }`}
         onClick={() => closeOnBackdropClick && onClose()}
       />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        className={[
-          "drawer-panel",
-          SIDE_CLASSES[side],
-          visible ? "drawer-visible" : "drawer-enter",
-          className,
-        ].filter(Boolean).join(" ")}
+        className={`fixed z-50 bg-white shadow-xl flex flex-col transition-transform duration-200 ease-in-out ${
+          sideStyle.base
+        } ${visible ? sideStyle.visible : sideStyle.enter} ${className}`}
         onKeyDown={handleKeyDown}
       >
         {children}
@@ -137,10 +149,18 @@ function DrawerHeader({
   ...props
 }: HTMLAttributes<HTMLDivElement> & { onClose?: () => void }) {
   return (
-    <div className={["drawer-header", className].filter(Boolean).join(" ")} {...props}>
-      <div>{children}</div>
+    <div
+      className={`flex items-center justify-between gap-4 px-6 py-4 border-b border-neutral-200 shrink-0 ${className}`}
+      {...props}
+    >
+      <div className="flex-1 min-w-0">{children}</div>
       {onClose && (
-        <button type="button" onClick={onClose} aria-label="Tutup" className="drawer-close">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Tutup"
+          className="shrink-0 rounded-md p-1 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 cursor-pointer"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
@@ -152,7 +172,7 @@ function DrawerHeader({
 
 function DrawerTitle({ children, className = "", ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2 className={["drawer-title", className].filter(Boolean).join(" ")} {...props}>
+    <h2 className={`text-base font-semibold text-neutral-900 ${className}`} {...props}>
       {children}
     </h2>
   );
@@ -160,7 +180,7 @@ function DrawerTitle({ children, className = "", ...props }: HTMLAttributes<HTML
 
 function DrawerBody({ children, className = "", ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={["drawer-body", className].filter(Boolean).join(" ")} {...props}>
+    <div className={`px-6 py-4 overflow-y-auto flex-1 text-sm text-neutral-600 ${className}`} {...props}>
       {children}
     </div>
   );
@@ -168,7 +188,10 @@ function DrawerBody({ children, className = "", ...props }: HTMLAttributes<HTMLD
 
 function DrawerFooter({ children, className = "", ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={["drawer-footer", className].filter(Boolean).join(" ")} {...props}>
+    <div
+      className={`flex items-center justify-end gap-2 px-6 py-4 border-t border-neutral-200 shrink-0 bg-neutral-50/50 ${className}`}
+      {...props}
+    >
       {children}
     </div>
   );

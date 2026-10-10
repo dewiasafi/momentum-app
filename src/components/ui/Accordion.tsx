@@ -20,7 +20,7 @@ export interface AccordionProps {
   className?: string;
 }
 
-function Accordion({ children, type = "single", defaultOpen = [], className = "" }: AccordionProps) {
+export function Accordion({ children, type = "single", defaultOpen = [], className = "" }: AccordionProps) {
   const [openValues, setOpenValues] = useState<string[]>(defaultOpen);
 
   function toggle(value: string) {
@@ -35,7 +35,9 @@ function Accordion({ children, type = "single", defaultOpen = [], className = ""
 
   return (
     <AccordionContext.Provider value={{ openValues, toggle }}>
-      <div className={["accordion", className].filter(Boolean).join(" ")}>{children}</div>
+      <div className={`divide-y divide-neutral-200 border border-neutral-200 rounded-lg ${className}`}>
+        {children}
+      </div>
     </AccordionContext.Provider>
   );
 }
@@ -46,7 +48,7 @@ export interface AccordionItemProps {
   children: ReactNode;
 }
 
-function AccordionItem({ value, title, children }: AccordionItemProps) {
+export function AccordionItem({ value, title, children }: AccordionItemProps) {
   const { openValues, toggle } = useAccordionContext();
   const isOpen = openValues.includes(value);
   const idPrefix = useId();
@@ -59,11 +61,11 @@ function AccordionItem({ value, title, children }: AccordionItemProps) {
         aria-expanded={isOpen}
         aria-controls={`${idPrefix}-panel`}
         onClick={() => toggle(value)}
-        className="accordion-item-header"
+        className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left text-sm font-medium text-neutral-900 transition-colors cursor-pointer hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-forest/20 focus-visible:ring-inset"
       >
         <span>{title}</span>
         <svg
-          className={["accordion-icon", isOpen ? "accordion-icon-open" : ""].filter(Boolean).join(" ")}
+          className={`shrink-0 text-neutral-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
           width="16"
           height="16"
           viewBox="0 0 24 24"
@@ -84,9 +86,11 @@ function AccordionItem({ value, title, children }: AccordionItemProps) {
         id={`${idPrefix}-panel`}
         role="region"
         aria-labelledby={`${idPrefix}-header`}
-        className={["accordion-panel", isOpen ? "accordion-panel-open" : ""].filter(Boolean).join(" ")}
+        className={`grid transition-[grid-template-rows] duration-200 ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
-        <div className="accordion-panel-content">{children}</div>
+        <div className="overflow-hidden min-h-0 px-4 pb-4 text-sm text-neutral-600">
+          {children}
+        </div>
       </div>
     </div>
   );

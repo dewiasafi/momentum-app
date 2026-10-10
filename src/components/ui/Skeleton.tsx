@@ -18,11 +18,16 @@ export default function Skeleton({
 }: SkeletonProps) {
   const variantClass =
     variant === "text"
-      ? "skeleton-text"
+      ? "h-4 rounded-md"
       : variant === "circle"
-        ? "skeleton-circle"
-        : "";
-  const classes = ["skeleton", variantClass, className]
+        ? "rounded-full"
+        : "rounded-md";
+
+  const classes = [
+    "animate-pulse bg-neutral-200",
+    variantClass,
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
 

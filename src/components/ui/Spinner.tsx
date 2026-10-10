@@ -9,16 +9,16 @@ export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
   label?: string;
 }
 
-const SIZE_CLASSES: Record<SpinnerSize, string> = {
-  sm: "spinner-sm",
-  md: "spinner-md",
-  lg: "spinner-lg",
+const SIZE_STYLES: Record<SpinnerSize, string> = {
+  sm: "w-4 h-4 border-2",
+  md: "w-6 h-6 border-2",
+  lg: "w-8 h-8 border-[3px]",
 };
 
-const COLOR_CLASSES: Record<SpinnerColor, string> = {
-  neutral: "spinner-neutral",
-  primary: "spinner-primary",
-  white: "spinner-white",
+const COLOR_STYLES: Record<SpinnerColor, string> = {
+  neutral: "text-neutral-400",
+  primary: "text-app-forest",
+  white: "text-white",
 };
 
 export default function Spinner({
@@ -28,7 +28,14 @@ export default function Spinner({
   className = "",
   ...props
 }: SpinnerProps) {
-  const classes = ["spinner", SIZE_CLASSES[size], COLOR_CLASSES[color], className]
+  const baseClasses = "inline-block animate-spin rounded-full border-current border-t-transparent";
+
+  const classes = [
+    baseClasses,
+    SIZE_STYLES[size],
+    COLOR_STYLES[color],
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
 

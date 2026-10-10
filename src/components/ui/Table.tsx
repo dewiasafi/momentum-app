@@ -1,35 +1,5 @@
 import { ReactNode, HTMLAttributes, CSSProperties } from "react";
-
-const ELLIPSIS = "ellipsis" as const;
-type PageItem = number | typeof ELLIPSIS;
-
-function getPageRange(currentPage: number, totalPages: number, siblingCount: number): PageItem[] {
-  const totalNumbersShown = siblingCount * 2 + 5;
-
-  if (totalPages <= totalNumbersShown) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-
-  const leftSibling = Math.max(currentPage - siblingCount, 1);
-  const rightSibling = Math.min(currentPage + siblingCount, totalPages);
-
-  const showLeftEllipsis = leftSibling > 2;
-  const showRightEllipsis = rightSibling < totalPages - 1;
-
-  if (!showLeftEllipsis && showRightEllipsis) {
-    const leftRange = Array.from({ length: 3 + siblingCount * 2 }, (_, i) => i + 1);
-    return [...leftRange, ELLIPSIS, totalPages];
-  }
-
-  if (showLeftEllipsis && !showRightEllipsis) {
-    const rightRangeLength = 3 + siblingCount * 2;
-    const rightRange = Array.from({ length: rightRangeLength }, (_, i) => totalPages - rightRangeLength + i + 1);
-    return [1, ELLIPSIS, ...rightRange];
-  }
-
-  const middleRange = Array.from({ length: rightSibling - leftSibling + 1 }, (_, i) => leftSibling + i);
-  return [1, ELLIPSIS, ...middleRange, ELLIPSIS, totalPages];
-}
+import { Pagination, PaginationProps } from "./Pagination";
 
 export type SortDirection = "asc" | "desc" | null;
 
@@ -44,15 +14,6 @@ export interface ColumnType<T> {
   className?: string;
 }
 
-export interface TablePaginationConfig {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  siblingCount?: number;
-  totalItems?: number;
-  pageSize?: number;
-}
-
 export interface TableProps<T> extends Omit<HTMLAttributes<HTMLTableElement>, "children"> {
   dataSource: T[];
   columns: ColumnType<T>[];
@@ -64,11 +25,16 @@ export interface TableProps<T> extends Omit<HTMLAttributes<HTMLTableElement>, "c
   onSortChange?: (columnKey: string, direction: SortDirection) => void;
   hoverable?: boolean;
   striped?: boolean;
-  pagination?: TablePaginationConfig | false;
-  /** Tambahan props untuk kustomisasi warna header */
+  pagination?: PaginationProps | false;
   headerClassName?: string;
   headerStyle?: CSSProperties;
 }
+
+const ALIGN_MAP = {
+  left: "text-left justify-start",
+  center: "text-center justify-center",
+  right: "text-right justify-end",
+};
 
 export function Table<T>({
   dataSource,
@@ -88,96 +54,49 @@ export function Table<T>({
   ...props
 }: TableProps<T>) {
   const getRowKey = (record: T, index: number): string | number => {
-    let key: string | number | undefined;
-
-    if (typeof rowKey === "function") {
-      key = rowKey(record);
-    } else {
-      key = record[rowKey] as unknown as string | number;
-    }
-
-    if (key === undefined || key === null) {
-      console.warn(
-        `[Table Warning]: Properti rowKey "${String(rowKey)}" tidak ditemukan pada record data. Harap gunakan key yang unik (misal: 'id'). Fallback ke index sementara...`
-      );
-      return index; 
-    }
-
-    return key;
+    if (typeof rowKey === "function") return rowKey(record);
+    const val = record[rowKey] as unknown as string | number;
+    return val ?? index;
   };
 
   const handleSort = (column: ColumnType<T>) => {
     if (!column.sortable || !onSortChange) return;
-
     let nextDirection: SortDirection = "asc";
     if (sortColumn === column.key) {
       if (sortDirection === "asc") nextDirection = "desc";
       else if (sortDirection === "desc") nextDirection = null;
-      else nextDirection = "asc";
     }
-
     onSortChange(column.key, nextDirection);
   };
 
-  const alignClasses = {
-    left: "text-left",
-    center: "text-center",
-    right: "text-right",
-  };
-
   return (
-    <div className="table-wrapper">
-      <div className="table-container">
-        <table className={["table", className].filter(Boolean).join(" ")} {...props}>
-         <thead 
-            className={["table-head", headerClassName].filter(Boolean).join(" ")}
+    <div className="w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xs">
+      <div className="overflow-x-auto">
+        <table className={`w-full border-collapse text-left text-sm text-neutral-600 ${className}`} {...props}>
+          <thead
+            className={`text-xs font-semibold uppercase tracking-wider border-b border-slate-200 bg-slate-50 text-slate-600 ${headerClassName}`}
             style={headerStyle}
           >
             <tr>
               {columns.map((col) => {
                 const isCurrentSort = sortColumn === col.key;
-                const isSortable = Boolean(col.sortable);
-                const align = col.align ? alignClasses[col.align] : "text-left";
+                const alignStyle = ALIGN_MAP[col.align ?? "left"];
 
                 return (
                   <th
                     key={col.key}
                     scope="col"
                     style={{ width: col.width }}
-                    className={[
-                      "table-header-cell",
-                      isSortable ? "table-header-cell-sortable" : "",
-                      align,
-                      col.className || "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
+                    className={`px-6 py-3.5 transition-colors ${
+                      col.sortable ? "cursor-pointer select-none hover:bg-black/5" : ""
+                    } ${col.className || ""}`}
                     onClick={() => handleSort(col)}
-                    aria-sort={
-                      isCurrentSort && sortDirection === "asc"
-                        ? "ascending"
-                        : isCurrentSort && sortDirection === "desc"
-                        ? "descending"
-                        : undefined
-                    }
                   >
-
-                    <div className={`inline-flex items-center gap-1.5 w-full text-inherit ${col.align === "right" ? "justify-end" : col.align === "center" ? "justify-center" : "justify-start"}`}>
-                      <span className="text-inherit">{col.title}</span>
-                      {isSortable && (
-                        <span
-                          className={[
-                            "table-sort-icon",
-                            isCurrentSort && sortDirection ? "table-sort-icon-active" : "",
-                          ]
-                            .filter(Boolean)
-                            .join(" ")}
-                        >
-                          {isCurrentSort && sortDirection === "asc"
-                            ? "▲"
-                            : isCurrentSort && sortDirection === "desc"
-                            ? "▼"
-                            : "⇅"}
+                    <div className={`inline-flex items-center gap-1.5 w-full text-inherit ${alignStyle}`}>
+                      <span>{col.title}</span>
+                      {col.sortable && (
+                        <span className={`text-xs ${isCurrentSort && sortDirection ? "opacity-100 font-bold" : "opacity-60"}`}>
+                          {isCurrentSort && sortDirection === "asc" ? "▲" : isCurrentSort && sortDirection === "desc" ? "▼" : "⇅"}
                         </span>
                       )}
                     </div>
@@ -187,47 +106,38 @@ export function Table<T>({
             </tr>
           </thead>
 
-          <tbody className="table-body">
+          <tbody className="divide-y divide-slate-200 bg-white">
             {loading ? (
-              <tr className="table-body-row">
-                <td colSpan={columns.length} className="px-6 py-12 text-center text-text-subtext">
+              <tr>
+                <td colSpan={columns.length} className="px-6 py-12 text-center text-neutral-500">
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent-forest border-t-transparent" />
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-app-forest border-t-transparent" />
                     <span>Memuat data...</span>
                   </div>
                 </td>
               </tr>
             ) : dataSource.length === 0 ? (
-              <tr className="table-body-row">
-                <td colSpan={columns.length} className="px-6 py-12 text-center text-text-subtext">
+              <tr>
+                <td colSpan={columns.length} className="px-6 py-12 text-center text-neutral-500">
                   {emptyText}
                 </td>
               </tr>
             ) : (
               dataSource.map((record, index) => {
                 const key = getRowKey(record, index);
-                const rowClasses = [
-                  "table-body-row",
-                  hoverable ? "table-body-row-hoverable" : "",
-                  striped && index % 2 === 1 ? "table-body-row-striped" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ");
+                const rowStyle = `${hoverable ? "hover:bg-slate-50/80" : ""} ${
+                  striped && index % 2 === 1 ? "bg-slate-50/40" : ""
+                }`;
 
                 return (
-                  <tr key={key} className={rowClasses}>
+                  <tr key={key} className={`transition-colors ${rowStyle}`}>
                     {columns.map((col) => {
                       const val = col.dataIndex ? (record as any)[col.dataIndex] : undefined;
                       const cellContent = col.render ? col.render(val, record, index) : val;
-                      const cellAlign = col.align ? alignClasses[col.align] : "text-left";
+                      const alignStyle = ALIGN_MAP[col.align ?? "left"];
 
                       return (
-                        <td
-                          key={col.key}
-                          className={["table-cell", cellAlign, col.className || ""]
-                            .filter(Boolean)
-                            .join(" ")}
-                        >
+                        <td key={col.key} className={`px-6 py-4 text-neutral-600 whitespace-nowrap ${alignStyle} ${col.className || ""}`}>
                           {cellContent}
                         </td>
                       );
@@ -240,68 +150,7 @@ export function Table<T>({
         </table>
       </div>
 
-      {/* Footer Pagination */}
-      {pagination && pagination.totalPages > 1 && (
-        <div className="pagination-wrapper">
-          <div className="pagination-info">
-            {pagination.currentPage && (
-              <span>
-                Halaman <strong className="text-text-title">{pagination.currentPage}</strong> dari{" "}
-                <strong className="text-text-title">{pagination.totalPages}</strong>
-              </span>
-            )}
-          </div>
-
-          <nav aria-label="Pagination" className="pagination-nav">
-            <button
-              type="button"
-              disabled={pagination.currentPage === 1}
-              onClick={() => pagination.onPageChange(pagination.currentPage - 1)}
-              aria-label="Halaman sebelumnya"
-              className="pagination-item"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
-                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-
-            {getPageRange(pagination.currentPage, pagination.totalPages, pagination.siblingCount ?? 1).map((page, index) =>
-              page === ELLIPSIS ? (
-                <span key={`ellipsis-${index}`} className="pagination-ellipsis">
-                  …
-                </span>
-              ) : (
-                <button
-                  key={page}
-                  type="button"
-                  aria-current={page === pagination.currentPage ? "page" : undefined}
-                  onClick={() => pagination.onPageChange(page as number)}
-                  className={[
-                    "pagination-item",
-                    page === pagination.currentPage ? "pagination-item-active" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                >
-                  {page}
-                </button>
-              )
-            )}
-
-            <button
-              type="button"
-              disabled={pagination.currentPage === pagination.totalPages}
-              onClick={() => pagination.onPageChange(pagination.currentPage + 1)}
-              aria-label="Halaman berikutnya"
-              className="pagination-item"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </nav>
-        </div>
-      )}
+      {pagination && <Pagination {...pagination} />}
     </div>
   );
 }

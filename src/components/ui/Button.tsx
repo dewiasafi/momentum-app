@@ -15,21 +15,25 @@ export interface ButtonProps
 }
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: "btn-primary",
-  secondary: "btn-secondary",
-  ghost: "btn-ghost",
-  danger: "btn-danger",
+  primary:
+    "bg-app-forest text-white shadow-xs focus-visible:ring-app-sunshine hover:bg-app-olive active:bg-app-title",
+  secondary:
+    "bg-app-sunshine/10 text-app-forest border border-app-forest/20 shadow-xs focus-visible:ring-app-sunshine hover:bg-app-sunshine/25 hover:border-app-olive/40",
+  ghost:
+    "bg-transparent text-app-subtext focus-visible:ring-app-sunshine hover:bg-app-bg hover:text-app-title",
+  danger:
+    "bg-rose-600 text-white shadow-xs focus-visible:ring-app-error hover:bg-rose-700 active:bg-rose-800",
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: "btn-sm",
-  md: "btn-md",
-  lg: "btn-lg",
+  sm: "px-2.5 py-1.5 text-xs font-semibold [&_svg.lucide]:w-3.5 [&_svg.lucide]:h-3.5",
+  md: "px-3.5 py-2 text-sm font-semibold",
+  lg: "px-4.5 py-2.5 text-base font-semibold [&_svg.lucide]:w-5 [&_svg.lucide]:h-5",
 };
 
 function Spinner({ className = "" }: { className?: string }): React.ReactElement {
   return (
-    <svg 
+    <svg
       className={`animate-spin h-4 w-4 ${className}`}
       viewBox="0 0 24 24"
       fill="none"
@@ -57,14 +61,19 @@ export default function Button({
 }: ButtonProps): React.ReactElement {
   const isDisabled = disabled || loading;
 
+  const baseClasses =
+    "inline-flex items-center justify-center gap-2 font-sans font-medium rounded-lg transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none";
+
   const classes = [
-    "btn",
+    baseClasses,
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[size],
     fullWidth ? "w-full" : "",
     className,
-  ].filter(Boolean).join(" ");
-     
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <button
       type={type}

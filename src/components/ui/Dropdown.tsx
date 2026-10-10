@@ -30,7 +30,7 @@ export interface DropdownProps {
   closeOnEscape?: boolean;
 }
 
-function Dropdown({
+export function Dropdown({
   trigger,
   children,
   align = "left",
@@ -93,16 +93,15 @@ function Dropdown({
 
   return (
     <DropdownContext.Provider value={{ close }}>
-      <div ref={wrapperRef} className="dropdown-wrapper">
+      <div ref={wrapperRef} className="relative inline-flex">
         {triggerElement}
 
         {open && (
           <div
             role="menu"
-            className={[
-              "dropdown-panel",
-              align === "right" ? "dropdown-panel-right" : "dropdown-panel-left",
-            ].join(" ")}
+            className={`absolute z-50 mt-12 min-w-45 bg-white border border-neutral-200 rounded-lg shadow-md py-1 ${
+              align === "right" ? "right-0" : "left-0"
+            }`}
           >
             {children}
           </div>
@@ -118,7 +117,7 @@ export interface DropdownItemProps extends ButtonHTMLAttributes<HTMLButtonElemen
   closeOnClick?: boolean;
 }
 
-function DropdownItem({
+export function DropdownItem({
   icon,
   variant = "default",
   closeOnClick = true,
@@ -129,33 +128,34 @@ function DropdownItem({
 }: DropdownItemProps) {
   const close = useDropdownClose();
 
-  const classes = ["dropdown-item", variant === "danger" ? "dropdown-item-danger" : "", className]
-    .filter(Boolean)
-    .join(" ");
+  const variantStyles =
+    variant === "danger"
+      ? "text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+      : "text-neutral-700 hover:bg-neutral-50";
 
   return (
     <button
       type="button"
       role="menuitem"
-      className={classes}
+      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-left transition-colors cursor-pointer disabled:text-neutral-300 disabled:cursor-not-allowed ${variantStyles} ${className}`}
       onClick={(e) => {
         onClick?.(e);
         if (closeOnClick) close();
       }}
       {...props}
     >
-      {icon && <span className="dropdown-item-icon">{icon}</span>}
+      {icon && <span className="shrink-0 w-4 h-4 flex items-center justify-center">{icon}</span>}
       {children}
     </button>
   );
 }
 
-function DropdownDivider() {
-  return <div role="separator" className="dropdown-divider" />;
+export function DropdownDivider() {
+  return <div role="separator" className="my-1 border-t border-neutral-100" />;
 }
 
-function DropdownLabel({ children }: { children: ReactNode }) {
-  return <div className="dropdown-label">{children}</div>;
+export function DropdownLabel({ children }: { children: ReactNode }) {
+  return <div className="px-3 py-1.5 text-xs font-medium text-neutral-400 uppercase tracking-wide">{children}</div>;
 }
 
 Dropdown.Item = DropdownItem;

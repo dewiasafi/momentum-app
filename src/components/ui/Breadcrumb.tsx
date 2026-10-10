@@ -8,7 +8,6 @@ export interface BreadcrumbItem {
 
 export interface BreadcrumbProps {
   items: BreadcrumbItem[];
-  /** default panah kanan kecil — bisa diganti "/" atau icon lain */
   separator?: ReactNode;
 }
 
@@ -23,30 +22,28 @@ function DefaultSeparator() {
 export default function Breadcrumb({ items, separator }: BreadcrumbProps) {
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="breadcrumb">
+      <ol className="flex items-center flex-wrap gap-1.5 text-sm">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
 
           return (
-            <li key={index} className="breadcrumb-item">
+            <li key={index} className="flex items-center gap-1.5">
               {isLast ? (
-                // Halaman saat ini — teks polos, bukan link, biar user
-                // nggak salah klik "balik ke halaman yang lagi dibuka"
-                <span className="breadcrumb-current" aria-current="page">
+                <span className="text-neutral-900 font-medium" aria-current="page">
                   {item.label}
                 </span>
               ) : item.href ? (
-                <a href={item.href} onClick={item.onClick} className="breadcrumb-link">
+                <a href={item.href} onClick={item.onClick} className="text-neutral-500 hover:text-neutral-700 transition-colors">
                   {item.label}
                 </a>
               ) : (
-                <button type="button" onClick={item.onClick} className="breadcrumb-link">
+                <button type="button" onClick={item.onClick} className="text-neutral-500 hover:text-neutral-700 transition-colors cursor-pointer">
                   {item.label}
                 </button>
               )}
 
               {!isLast && (
-                <span className="breadcrumb-separator" aria-hidden="true">
+                <span className="text-neutral-300 flex items-center" aria-hidden="true">
                   {separator ?? <DefaultSeparator />}
                 </span>
               )}
