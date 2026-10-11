@@ -1,226 +1,212 @@
-import { convertDateFormat, formatViewDate } from '@/utils/formatters';
-import React, { useMemo, useState } from 'react'
-import { Activity, ActivityPriority } from '../types';
-import { useActivities } from '../api/useActivities';
-import { Badge, Button, Card, Select } from '@/components/ui';
-import { AlertCircle, Calendar, CheckCircle2, ChevronLeft, ChevronRight, Circle, Clock, Filter, Search, X } from 'lucide-react';
+import React from "react";
+import { Activity } from "../types";
+import { Badge, Dropdown } from "@/components/ui";
+import {
+  BookOpen,
+  CheckCircle2,
+  Circle,
+  Clock,
+  Drama,
+  Edit2,
+  Magnet,
+  MessageCircle,
+  MoreVertical,
+  Trash2,
+} from "lucide-react";
 
-const ActivityCard = () => {
-     const [searchInput, setSearchInput] = useState<string>('');
-     const [confirmedSearch, setConfirmedSearch] = useState<string>('');
-
-     const [selectedCategory, setSelectedCategory] = useState<string>('All');
-     const [statusFilter, setStatusFilter] = useState<string>('All');
-     const [dateFilter, setDateFilter] = useState<string>('');
-     const [currentPage, setCurrentPage] = useState<number>(1);
-
-     const activityParams = useMemo(() => {
-          return {
-               page: currentPage,
-               limit: 5,
-               search: confirmedSearch || undefined,
-               category: selectedCategory === 'All' ? undefined : selectedCategory,
-               is_completed: statusFilter === 'All' ? undefined : statusFilter === 'Completed',
-               start_date: dateFilter ? convertDateFormat(dateFilter) : undefined,
-               end_date: dateFilter ? convertDateFormat(dateFilter) : undefined
-          }
-     }, [currentPage, searchInput, selectedCategory, statusFilter, dateFilter]);
-
-     const { data: apiResponse, isLoading, isError, error } = useActivities(activityParams);
-     const paginatedData = apiResponse?.data;
-     const activityItems = paginatedData?.items || [];
-     const totalPages = paginatedData?.total_items || 1;
-
-     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-          if (e.key === 'Enter') {
-               e.preventDefault();
-               setConfirmedSearch(searchInput);
-               setCurrentPage(1);
-          }
-     };
-
-     const handleClearSearch = () => {
-          setSearchInput('');
-          setConfirmedSearch('');
-          setCurrentPage(1);
-     };
-     const getPriorityVariant = (priority: ActivityPriority) => {
-          if (priority === 'high') return 'leaf';
-          if (priority === 'medium') return 'sunshine';
-          return 'sage';
-     };
-
-     const getCategoryVariant = (category: string) => {
-          switch (category) {
-               case 'Work': return 'seafoam';
-               case 'Learning': return 'eucalyptus';
-               case 'Household': return 'moss';
-               default: return 'neutral';
-          }
-     };
-
-     return (
-          <Card
-               title="Today's Activities"
-               className="w-full flex flex-col"
-               extra={
-                    <Badge variant="primary" size="md" dot>
-                         {activityItems.length} Shown
-                    </Badge>
-               }
-               actions={[
-                    <Button
-                         key="prev"
-                         variant="ghost"
-                         size="sm"
-                         disabled={currentPage === 1 || isLoading}
-                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                         leftIcon={<ChevronLeft />}
-                    >
-                         Previous
-                    </Button>,
-                    <span key="info" className="text-xs font-semibold text-app-subtext">
-                         {isLoading ? "Loading..." : `Page ${currentPage} of ${totalPages}`}
-                    </span>,
-                    <Button
-                         key="next"
-                         variant="ghost"
-                         size="sm"
-                         disabled={currentPage === totalPages || isLoading}
-                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                         rightIcon={<ChevronRight />}
-                    >
-                         Next
-                    </Button>
-               ]}
-          >
-               {/* LINE 1: SEARCH BAR FILTER */}
-               <div className="relative mb-4">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-app-subtext">
-                         <Search />
-                    </span>
-                    <input
-                         type="text"
-                         value={searchInput} // Mengikat input lokal secara real-time
-                         onChange={(e) => setSearchInput(e.target.value)}
-                         onKeyDown={handleKeyDown} // Kunci Utama: Hanya jalankan query jika ditekan Enter
-                         placeholder="Type query and press Enter to search..."
-                         className="w-full pl-9 pr-12 py-2 text-sm bg-app-bg/30 border border-app-subtext/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-app-eucalyptus focus:bg-white transition-all text-app-body placeholder-app-subtext/50"
-                    />
-                    {searchInput && (
-                         <button
-                              onClick={handleClearSearch}
-                              className="absolute inset-y-0 right-0 pr-3 flex items-center text-app-subtext hover:text-app-title transition-colors cursor-pointer"
-                         >
-                              <X className="w-3.5 h-3.5" />
-                         </button>
-                    )}
-               </div>
-
-               {/* LINE 2: THREE-COLUMN DROPDOWNS MULTI-FILTER GRID */}
-               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                    <Select
-                         label="Category"
-                         value={selectedCategory}
-                         onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
-                         options={[
-                              { label: 'All Categories', value: 'All' },
-                              { label: 'Work', value: 'Work' },
-                              { label: 'Learning', value: 'Learning' },
-                              { label: 'Household', value: 'Household' },
-                              { label: 'General', value: 'General' },
-                         ]}
-                    />
-
-                    <Select
-                         label="Status"
-                         value={statusFilter}
-                         onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-                         options={[
-                              { label: 'All Status', value: 'All' },
-                              { label: 'Active Tasks', value: 'Uncompleted' },
-                              { label: 'Completed', value: 'Completed' },
-                         ]}
-                    />
-
-                    {/* <div className="flex flex-col gap-y-1.5">
-          <label className="font-semibold text-app-title text-sm select-none">Date</label>
-          <input 
-            type="date" 
-            value={dateFilter}
-            onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
-            className="w-full text-sm px-3.5 py-1.5 border border-app-subtext/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-app-eucalyptus/20 focus:border-app-eucalyptus text-app-body bg-white"
-          />
-        </div> */}
-               </div>
-
-               {/* LINE 3: DYNAMIC DATA RENDERING LIST */}
-               <div className="space-y-3 h-full overflow-y-auto pr-1">
-                    {isLoading ? (
-                         <div className="text-center py-12 text-sm text-app-subtext font-medium animate-pulse">
-                              Fetching fresh data from your server API...
-                         </div>
-                    ) : isError ? (
-                         <div className="text-center py-12 border border-red-100 rounded-xl bg-red-50/30 text-rose-600 flex flex-col items-center gap-2 px-4">
-                              <AlertCircle className="w-5 h-5" />
-                              <p className="text-xs font-semibold">Failed to pull activities: {(error as Error)?.message || "Server Error"}</p>
-                         </div>
-                    ) : activityItems.length > 0 ? (
-                         activityItems.map((item: Activity) => (
-                              <div
-                                   key={item.id}
-                                   className={`flex items-start gap-3 p-4 rounded-xl border transition-all duration-200 ${item.is_completed
-                                        ? 'bg-app-bg/20 border-app-subtext/10 opacity-60'
-                                        : 'bg-white border-app-subtext/10 shadow-xs hover:border-app-subtext/30'
-                                        }`}
-                              >
-                                   {/* Checkbox Icon Indicator (Read-Only) */}
-                                   <div className={`mt-0.5 shrink-0 ${item.is_completed ? 'text-emerald-600' : 'text-app-subtext'}`}>
-                                        {item.is_completed ? <CheckCircle2 /> : <Circle />}
-                                   </div>
-
-                                   {/* Core Content Area */}
-                                   <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                                             <Badge variant={getCategoryVariant(item.category)} size="sm">
-                                                  {item.category}
-                                             </Badge>
-                                             <Badge variant={getPriorityVariant(item.priority)} size="sm" dot>
-                                                  {item.priority}
-                                             </Badge>
-                                             <span className="text-[10px] text-app-subtext font-medium ml-auto flex items-center gap-1">
-                                                  <Calendar /> {formatViewDate(item.created_at)}
-                                             </span>
-                                        </div>
-
-                                        <h3 className={`text-sm font-semibold transition-all ${item.is_completed ? 'line-through text-app-disabled' : 'text-app-body'
-                                             }`}>
-                                             {item.title}
-                                        </h3>
-
-                                        {item.notes && (
-                                             <p className="text-xs text-app-subtext mt-1 line-clamp-2 leading-relaxed">
-                                                  {item.notes}
-                                             </p>
-                                        )}
-                                   </div>
-
-                                   {/* Estimated Minute Marker */}
-                                   <span className="text-[10px] bg-slate-50 text-app-subtext border border-slate-100 px-2 py-0.5 rounded-md font-medium shrink-0 flex items-center gap-1.5">
-                                        <Clock /> {item.estimated_minutes}m
-                                   </span>
-                              </div>
-                         ))
-                    ) : (
-                         <div className="text-center py-12 border border-dashed border-app-subtext/20 rounded-xl bg-app-bg/10 flex flex-col items-center justify-center gap-2">
-                              <Filter className="text-app-subtext opacity-40 w-5 h-5" />
-                              <p className="text-sm text-app-subtext font-medium">No tasks found matching your filters.</p>
-                         </div>
-                    )}
-               </div>
-          </Card>
-
-     )
+interface ActivityCardProps {
+  activity: Activity;
+  onToggleComplete?: (id: string) => void;
+  onEdit?: (activity: Activity) => void;
+  onDelete?: (id: string) => void;
 }
 
-export default ActivityCard
+export const ActivityCard: React.FC<ActivityCardProps> = ({
+  activity,
+  onToggleComplete,
+  onEdit,
+  onDelete,
+}) => {
+  // Tentukan ikon dan palet warna berdasarkan kategori
+  const getCategoryTheme = (category: string, iconName?: string) => {
+    switch (category.toLowerCase()) {
+      case "education":
+        return {
+          icon: <BookOpen className="w-6 h-6" />,
+          boxClass: "bg-rose-50 text-rose-500",
+          tagBorder: "border-rose-300 text-rose-600 bg-rose-50/50",
+        };
+      case "emotional":
+        return {
+          icon: iconName === "book" ? <BookOpen className="w-6 h-6" /> : <Drama className="w-6 h-6" />,
+          boxClass: "bg-rose-50 text-rose-500",
+          tagBorder: "border-rose-300 text-rose-600 bg-rose-50/50",
+        };
+      case "physical":
+        return {
+          icon: <Magnet className="w-6 h-6" />,
+          boxClass: "bg-purple-50 text-purple-600",
+          tagBorder: "border-purple-300 text-purple-700 bg-purple-50/50",
+        };
+      case "social":
+        return {
+          icon: <MessageCircle className="w-6 h-6" />,
+          boxClass: "bg-amber-50 text-amber-600",
+          tagBorder: "border-amber-300 text-amber-700 bg-amber-50/50",
+        };
+      default:
+        return {
+          icon: <BookOpen className="w-6 h-6" />,
+          boxClass: "bg-emerald-50 text-emerald-600",
+          tagBorder: "border-emerald-300 text-emerald-700 bg-emerald-50/50",
+        };
+    }
+  };
+
+  const theme = getCategoryTheme(activity.category, activity.icon_name);
+
+  const getPriorityBadge = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return <Badge variant="leaf" size="sm" dot>Tinggi</Badge>;
+      case "medium":
+        return <Badge variant="sunshine" size="sm" dot>Sedang</Badge>;
+      default:
+        return <Badge variant="sage" size="sm" dot>Rendah</Badge>;
+    }
+  };
+
+  return (
+    <div
+      className={`group relative bg-white border rounded-2xl p-4 sm:p-5 transition-all duration-200 ${
+        activity.is_completed
+          ? "border-app-subtext/10 bg-white/70 opacity-75"
+          : "border-app-subtext/15 hover:border-app-forest/30 hover:shadow-md"
+      }`}
+    >
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        {/* Kiri: Tombol Checklist Cepat + Kotak Ikon Kategori */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Tombol Checklist Cepat */}
+          {onToggleComplete && (
+            <button
+              type="button"
+              onClick={() => onToggleComplete(activity.id)}
+              className="text-app-subtext/50 hover:text-app-forest transition-colors cursor-pointer"
+              title={activity.is_completed ? "Tandai Belum Selesai" : "Tandai Selesai"}
+              aria-label={activity.is_completed ? "Tandai Belum Selesai" : "Tandai Selesai"}
+            >
+              {activity.is_completed ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+              ) : (
+                <Circle className="w-5 h-5" />
+              )}
+            </button>
+          )}
+
+          {/* Kotak Ikon Kategori */}
+          <div
+            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-2xs ${theme.boxClass}`}
+          >
+            {theme.icon}
+          </div>
+        </div>
+
+        {/* Tengah: Judul, Tag Kategori, Modul, dan Catatan Pribadi */}
+        <div className="flex-1 min-w-0 pr-2">
+          {/* Baris Judul & Tag */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h3
+              className={`font-bold text-sm sm:text-base leading-snug transition-all ${
+                activity.is_completed
+                  ? "line-through text-app-disabled"
+                  : "text-app-title"
+              }`}
+            >
+              {activity.title}
+            </h3>
+
+            {/* Pill Tag Kategori */}
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${theme.tagBorder}`}
+            >
+              {activity.category}
+            </span>
+
+            {/* Tag Modul */}
+            {activity.module && (
+              <span className="text-[10px] text-app-subtext bg-app-bg px-2 py-0.5 rounded-md font-medium border border-app-subtext/15">
+                {activity.module}
+              </span>
+            )}
+          </div>
+
+          {/* Catatan / Deskripsi Aktivitas */}
+          {activity.notes && (
+            <p className="text-xs sm:text-sm text-app-subtext mt-1.5 leading-relaxed line-clamp-2 sm:line-clamp-3">
+              {activity.notes}
+            </p>
+          )}
+        </div>
+
+        {/* Kanan: Metadata Pribadi (Durasi, Prioritas, & Menu Aksi Tiga Titik) */}
+        <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 sm:gap-4 pt-3 sm:pt-0 border-t sm:border-t-0 border-app-subtext/10 shrink-0">
+          {/* Indikator Prioritas */}
+          <div>{getPriorityBadge(activity.priority)}</div>
+
+          {/* Estimasi Durasi Pribadi */}
+          {activity.estimated_minutes > 0 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-app-bg text-app-forest text-xs font-semibold border border-app-subtext/10">
+              <Clock className="w-3.5 h-3.5 text-app-eucalyptus" />
+              <span>{activity.estimated_minutes}m</span>
+            </div>
+          )}
+
+          {/* Menu Dropdown Aksi Tiga Titik */}
+          <Dropdown
+            align="right"
+            trigger={
+              <button
+                type="button"
+                className="p-1.5 rounded-lg text-app-subtext hover:text-app-title hover:bg-app-bg transition-colors cursor-pointer"
+                aria-label="Opsi Aktivitas"
+              >
+                <MoreVertical className="w-4 h-4" />
+              </button>
+            }
+          >
+            {onToggleComplete && (
+              <Dropdown.Item
+                icon={activity.is_completed ? <Circle className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                onClick={() => onToggleComplete(activity.id)}
+              >
+                {activity.is_completed ? "Tandai Belum Selesai" : "Tandai Selesai"}
+              </Dropdown.Item>
+            )}
+
+            {onEdit && (
+              <Dropdown.Item
+                icon={<Edit2 className="w-3.5 h-3.5" />}
+                onClick={() => onEdit(activity)}
+              >
+                Edit Aktivitas
+              </Dropdown.Item>
+            )}
+
+            <Dropdown.Divider />
+
+            {onDelete && (
+              <Dropdown.Item
+                variant="danger"
+                icon={<Trash2 className="w-3.5 h-3.5" />}
+                onClick={() => onDelete(activity.id)}
+              >
+                Hapus Aktivitas
+              </Dropdown.Item>
+            )}
+          </Dropdown>
+        </div>
+      </div>
+    </div>
+  );
+};

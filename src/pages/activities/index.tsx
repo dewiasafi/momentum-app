@@ -1,11 +1,8 @@
-import ActivityCard from '@/features/activities/components/ActivityCard';
-import React from 'react'
+import React from 'react';
+import { ActivitiesView } from '@/features/activities/components/ActivitiesView';
 
-const ActivityPage = () => {
+const ActivityPage: React.FC = () => {
+  return <ActivitiesView />
+};
 
-  return (
-    <ActivityCard />
-  )
-}
-
-export default ActivityPage
+export default ActivityPage;
