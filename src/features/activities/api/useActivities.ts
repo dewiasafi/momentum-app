@@ -1,4 +1,4 @@
-import { getActivities } from "@/features/activities/api/activityApi";
+import { getActivities } from "@/features/activities/api/activity.api";
 import { ActivityFilterParams } from "@/features/activities/types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
