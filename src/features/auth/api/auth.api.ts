@@ -1,17 +1,71 @@
-import { resolve } from "node:dns";
-import { RegisterFormData, RegisterResponse } from "../types";
+import { apiClient } from "@/services/apiClient";
+import type {
+  ApiResponse,
+  LoginPayload,
+  LoginResponseData,
+  RegisterFormData,
+  RegisterPayload,
+  RegisterResponseData,
+  ResendVerificationPayload,
+  SessionStatusData,
+  UpdateProfilePayload,
+  User,
+  VerifyEmailPayload,
+} from "../types";
 
-export const registerUserApi = async (
-     data: RegisterFormData
-): Promise<RegisterResponse> => {
-     await new Promise((resolve) => setTimeout(resolve, 1000));
-     if (data.email === "registered@example.com") {
-          throw new Error("Email ini sudah terdaftar. Gunakan email lain.");
-     }
+export const authApi = {
+  register: async (payload: RegisterPayload): Promise<ApiResponse<RegisterResponseData>> => {
+    const response = await apiClient.post<ApiResponse<RegisterResponseData>>(
+      "/auth/register",
+      payload
+    );
+    return response.data;
+  },
 
-     return {
-          success: true,
-          message: "Akun berhasil dibuat!",
-     }
+  login: async (payload: LoginPayload): Promise<ApiResponse<LoginResponseData>> => {
+    const response = await apiClient.post<ApiResponse<LoginResponseData>>(
+      "/auth/login",
+      payload
+    );
+    return response.data;
+  },
 
-}
+  verifyEmail: async (payload: VerifyEmailPayload): Promise<ApiResponse<null>> => {
+    const response = await apiClient.post<ApiResponse<null>>(
+      "/auth/verify-email",
+      payload
+    );
+    return response.data;
+  },
+
+  resendVerification: async (payload: ResendVerificationPayload): Promise<ApiResponse<null>> => {
+    const response = await apiClient.post<ApiResponse<null>>(
+      "/auth/resend-verification",
+      payload
+    );
+    return response.data;
+  },
+
+  getSession: async (): Promise<ApiResponse<SessionStatusData>> => {
+    const response = await apiClient.get<ApiResponse<SessionStatusData>>("/auth/session");
+    return response.data;
+  },
+
+  getProfile: async (): Promise<ApiResponse<User>> => {
+    const response = await apiClient.get<ApiResponse<User>>("/profile/me");
+    return response.data;
+  },
+
+  updateProfile: async (payload: UpdateProfilePayload): Promise<ApiResponse<User>> => {
+    const response = await apiClient.patch<ApiResponse<User>>("/profile/me", payload);
+    return response.data;
+  },
+};
+
+export const registerUserApi = async (data: RegisterFormData) => {
+  return authApi.register({
+    name: data.name,
+    email: data.email,
+    password: data.password,
+  });
+};

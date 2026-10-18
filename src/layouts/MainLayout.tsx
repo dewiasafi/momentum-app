@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopNavbar } from './TopNavbar';
 import { MOCK_USER } from '@/utils/constant/mock_data';
+import { useAuth } from '@/features/auth/context/AuthContext';
+import { UserProfile } from '@/types/user';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -9,6 +11,15 @@ interface MainLayoutProps {
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const { user } = useAuth();
+
+  const currentUser: UserProfile = {
+    id: user?.id || MOCK_USER.id,
+    name: user?.name || MOCK_USER.name,
+    email: user?.email || MOCK_USER.email,
+    imageUrl: MOCK_USER.imageUrl,
+    role: MOCK_USER.role,
+  };
 
   return (
     <div className="flex h-screen w-screen overflow-hidden text-app-title font-sans bg-app-bg">
@@ -19,7 +30,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
         <TopNavbar
-          user = {MOCK_USER}
+          user={currentUser}
           onToggleMobileSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
         />
 
