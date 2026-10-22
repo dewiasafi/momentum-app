@@ -77,3 +77,7 @@
     @apply w-4 h-4 stroke-2 shrink-0;
   }
 }
+
+.error-message{
+  @apply mt-1 ml-1 text-xs text-app-error
+}

@@ -10,43 +10,81 @@ const ResendVerificationPage: React.FC = () => {
 
   const initialEmail =
     searchParams.get("email") ||
-    (location.state as { email?: string })?.email ||
+    (location.state as { email?: string } | null)?.email ||
     "";
 
   const [email, setEmail] = useState(initialEmail);
   const [isLoading, setIsLoading] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const validateEmail = (value: string): string | null => {
+    if (!value.trim()) {
+      return "Silakan masukkan alamat email Anda.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(value.trim())) {
+      return "Format email tidak valid.";
+    }
+
+    return null;
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setSuccessMessage(null);
+    setErrorMessage(null);
+
+    if (emailTouched) {
+      setEmailError(validateEmail(value));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setEmailTouched(true);
     setSuccessMessage(null);
     setErrorMessage(null);
 
     const trimmedEmail = email.trim();
-    if (!trimmedEmail) {
-      setErrorMessage("Silakan masukkan alamat email Anda.");
-      return;
-    }
+    const validation = validateEmail(trimmedEmail);
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmedEmail)) {
-      setErrorMessage("Format email tidak valid.");
-      return;
-    }
+    setEmailError(validation);
+
+    if (validation) return;
 
     setIsLoading(true);
 
     try {
-      const response = await authApi.resendVerification({ email: trimmedEmail });
+      const response = await authApi.resendVerification({
+        email: trimmedEmail,
+      });
+
       setSuccessMessage(
-        response.message || "Tautan verifikasi baru berhasil dikirim ke email Anda."
+        response.message ||
+          "Jika email terdaftar dan belum diverifikasi, tautan verifikasi akan dikirim."
       );
     } catch (err: unknown) {
+      const error = err as {
+        message?: string;
+        response?: {
+          data?: {
+            message?: string;
+            error?: string;
+          };
+        };
+      };
+
       setErrorMessage(
-        err instanceof Error
-          ? err.message
-          : "Gagal mengirim tautan verifikasi. Silakan coba kembali."
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          error.message ||
+          "Gagal mengirim tautan verifikasi. Silakan coba kembali."
       );
     } finally {
       setIsLoading(false);
@@ -59,11 +97,14 @@ const ResendVerificationPage: React.FC = () => {
         <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-accent-forest/10 border border-accent-forest/20 flex items-center justify-center text-accent-forest">
           <Mail className="w-7 h-7" />
         </div>
+
         <h1 className="text-2xl font-bold text-app-title mb-1">
           Kirim Ulang Verifikasi
         </h1>
+
         <p className="text-sm text-app-subtext">
-          Masukkan email yang Anda daftarkan. Kami akan mengirimkan tautan aktivasi baru.
+          Masukkan email yang Anda daftarkan untuk meminta tautan verifikasi
+          baru.
         </p>
       </div>
 
@@ -71,7 +112,7 @@ const ResendVerificationPage: React.FC = () => {
         <div className="space-y-4">
           <Alert variant="success">
             <div>
-              <p className="font-semibold mb-1">Tautan Berhasil Dikirim!</p>
+              <p className="font-semibold mb-1">Permintaan Diproses</p>
               <p className="text-xs">{successMessage}</p>
             </div>
           </Alert>
@@ -81,12 +122,18 @@ const ResendVerificationPage: React.FC = () => {
               <CheckCircle2 className="w-4 h-4 text-accent-forest shrink-0" />
               Langkah Selanjutnya:
             </p>
-            <p>1. Periksa kotak masuk (inbox) atau folder spam pada email <strong>{email}</strong>.</p>
-            <p>2. Klik tautan verifikasi yang kami kirimkan dalam waktu maksimal 30 menit.</p>
+            <p>
+              1. Periksa kotak masuk atau folder spam email{" "}
+              <strong>{email.trim()}</strong>.
+            </p>
+            <p>
+              2. Jika email terdaftar dan memenuhi syarat, ikuti tautan
+              verifikasi yang dikirimkan.
+            </p>
           </div>
 
           <div className="pt-2 space-y-2">
-            <Link to="/login">
+            <Link to="/login" className="block">
               <Button variant="primary" fullWidth>
                 Ke Halaman Login
               </Button>
@@ -97,6 +144,8 @@ const ResendVerificationPage: React.FC = () => {
               onClick={() => {
                 setSuccessMessage(null);
                 setErrorMessage(null);
+                setEmailError(null);
+                setEmailTouched(false);
               }}
               className="text-xs text-center w-full text-app-subtext hover:text-app-title underline cursor-pointer pt-2"
             >
@@ -107,21 +156,32 @@ const ResendVerificationPage: React.FC = () => {
       ) : (
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           {errorMessage && (
-            <Alert variant="error">
-              {errorMessage}
-            </Alert>
+            <Alert variant="error">{errorMessage}</Alert>
           )}
 
-          <Input
-            label="Alamat Email Terdaftar"
-            type="email"
-            placeholder="nama@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            fullWidth
-            required
-            autoComplete="email"
-          />
+          <div>
+            <Input
+              label="Alamat Email Terdaftar"
+              type="email"
+              placeholder="nama@email.com"
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              onBlur={() => {
+                setEmailTouched(true);
+                setEmailError(validateEmail(email));
+              }}
+              fullWidth
+              required
+              autoComplete="email"
+              aria-invalid={Boolean(emailError)}
+            />
+
+            {emailError && (
+              <p className="error-message" role="alert">
+                {emailError}
+              </p>
+            )}
+          </div>
 
           <Button
             type="submit"
@@ -159,4 +219,3 @@ const ResendVerificationPage: React.FC = () => {
 };
 
 export default ResendVerificationPage;
-

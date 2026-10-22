@@ -1,132 +1,112 @@
 import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  type ReactNode,
+  createContext, useCallback, useContext, useEffect, useState, type ReactNode,
 } from "react";
+import { AuthContextValue, LoginPayload, LoginResponseData, User } from "../types";
 import { authApi } from "../api/auth.api";
-import type {
-  AuthContextValue,
-  LoginPayload,
-  LoginResponseData,
-  User,
-} from "../types";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem("token");
-  });
+  const [user, setUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem("user");
-    if (!saved) return null;
-    try {
-      return JSON.parse(saved);
-    } catch {
-      return null;
-    }
-  });
-
-  const [isLoading, setIsLoading] = useState<boolean>(() => {
-    return Boolean(localStorage.getItem("token"));
-  });
-
-  const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
+ 
+const logout = useCallback(async (): Promise<void> => {
+  try {
+    await authApi.logout();
+  } finally {
     setUser(null);
-  }, []);
+  }
+}, []);
+
 
   const checkSession = useCallback(async (): Promise<boolean> => {
-    const savedToken = localStorage.getItem("token");
-    if (!savedToken) {
-      logout();
-      return false;
-    }
-
     try {
-      const response = await authApi.getSession();
-      const isActive = Boolean(response.data?.active);
-      if (!isActive) {
+      const sessionResponse = await authApi.getSession()
+      const session = sessionResponse.data;
+
+      if (!session.active) {
         logout();
         return false;
       }
-      return true;
-    } catch {
-      logout();
-      return false;
+
+      const profileResponse = await authApi.getProfile();
+      if (!profileResponse.data) {
+        logout();
+        return false
+      }
+       const profile = profileResponse.data;
+
+      setUser(profile);
+      return true
+    } catch (error) {
+      logout()
+      return false
     }
-  }, [logout]);
+  }, [logout])
 
   useEffect(() => {
-    const initSession = async () => {
-      const savedToken = localStorage.getItem("token");
-      if (!savedToken) {
-        setIsLoading(false);
-        return;
-      }
+    let mounted = true
 
+    const initializeSession = async () => {
       try {
-        const sessionRes = await authApi.getSession();
-        if (sessionRes.data?.active) {
-          const profileRes = await authApi.getProfile();
-          if (profileRes.data) {
-            setUser(profileRes.data);
-            localStorage.setItem("user", JSON.stringify(profileRes.data));
-          }
-        } else {
-          logout();
+        const sessionResponse = await authApi.getSession();
+        if (!sessionResponse.data?.active) {
+          if (mounted) setUser(null);
+          return;
         }
-      } catch {
-        logout();
+
+        const profileResponse = await authApi.getProfile();
+        if (mounted) {
+          setUser(profileResponse.data ?? null);
+        }
+      } catch (error) {
+        if (mounted) setUser(null);
       } finally {
-        setIsLoading(false);
+        if (mounted) setIsLoading(false);
       }
     };
+    void initializeSession();
 
-    initSession();
-  }, [logout]);
+    return () => {
+      mounted = false;
+    };
+  }, [])
 
   useEffect(() => {
-    if (!token) return;
-
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        checkSession();
+        void checkSession();
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange,
+      );
     };
-  }, [token, checkSession]);
+
+  }, [checkSession])
 
   const login = async (
     payloadOrEmail: LoginPayload | string,
-    passwordArg?: string
+    passwordArg?: string,
   ): Promise<LoginResponseData> => {
     const payload: LoginPayload =
       typeof payloadOrEmail === "string"
-        ? { email: payloadOrEmail, password: passwordArg || "" }
+        ? {
+          email: payloadOrEmail,
+          password: passwordArg ?? "",
+        }
         : payloadOrEmail;
 
     const response = await authApi.login(payload);
-    if (!response.data) {
-      throw new Error(response.message || "Login gagal");
+    if (!response.data?.user) {
+      throw new Error(response.message || "Login gagal.");
     }
-
-    const { token: receivedToken, user: receivedUser } = response.data;
-    localStorage.setItem("token", receivedToken);
-    localStorage.setItem("user", JSON.stringify(receivedUser));
-
-    setToken(receivedToken);
-    setUser(receivedUser);
+    setUser(response.data.user);
 
     return response.data;
   };
@@ -136,7 +116,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await authApi.getProfile();
       if (response.data) {
         setUser(response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
         return response.data;
       }
       return null;
@@ -145,13 +124,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const isAuthenticated = Boolean(token && user);
+  const isAuthenticated = user !== null;
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
+        token: null,
         isAuthenticated,
         isLoading,
         login,
@@ -162,13 +141,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     >
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}
 
 export const useAuth = (): AuthContextValue => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
+  const context = useContext(AuthContext)
+  if (!context) {
     throw new Error("useAuth harus dipakai di dalam <AuthProvider>");
   }
-  return ctx;
-};
+
+  return context
+}

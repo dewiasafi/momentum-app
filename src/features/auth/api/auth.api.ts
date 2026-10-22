@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/apiClient";
 import type {
   ApiResponse,
+  ForgotPasswordPayload,
   LoginPayload,
   LoginResponseData,
   RegisterFormData,
@@ -60,6 +61,24 @@ export const authApi = {
     const response = await apiClient.patch<ApiResponse<User>>("/profile/me", payload);
     return response.data;
   },
+
+
+  logout: async (): Promise<ApiResponse<null>> => {
+    const response = await apiClient.post<ApiResponse<null>>(
+      "/auth/logout",
+    );
+
+    return response.data;
+  },
+  forgotPassword: async ( payload: ForgotPasswordPayload
+    ): Promise<ApiResponse<null>> => {
+    const response = await apiClient.post<ApiResponse<null>>(
+      "/auth/forgot-password",
+      payload
+    );
+    return response.data;
+  },
+
 };
 
 export const registerUserApi = async (data: RegisterFormData) => {

@@ -1,63 +1,115 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { MailCheck, Send } from "lucide-react";
-import AuthLayout from "@/layouts/AuthLayout";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
-import { MOCK_USERS } from "@/features/auth/data/mockUsers";
+import { authApi } from "@/features/auth/api/auth.api";
+import { Button, Input, Alert } from "@/components/ui";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    const exists = MOCK_USERS.some((u) => u.email === email);
-    if (!exists) {
-      setError("Email tidak ditemukan dalam sistem kami.");
-      return;
+  const validateEmail = (value: string): string | null => {
+    if (!value.trim()) {
+      return "Email wajib diisi.";
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(value.trim())) {
+      return "Masukkan alamat email dengan format yang valid.";
+    }
+
+    return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setEmailTouched(true);
+
+    const trimmedEmail = email.trim();
+    const validation = validateEmail(trimmedEmail);
+
+    setEmailError(validation);
+    if (validation) return;
+
     setIsLoading(true);
-    // Simulasi pengiriman email
-    await new Promise((res) => setTimeout(res, 1000));
-    setIsLoading(false);
-    setSent(true);
+
+    try {
+      await authApi.forgotPassword({ email: trimmedEmail });
+      setSent(true);
+    } catch (err: unknown) {
+      const errorObj = err as {
+        message?: string;
+        response?: {
+          data?: {
+            message?: string;
+            error?: string;
+          };
+        };
+      };
+
+      setError(
+        errorObj.response?.data?.message ||
+          errorObj.response?.data?.error ||
+          errorObj.message ||
+          "Permintaan reset password gagal. Silakan coba kembali."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setError(null);
+    setSent(false);
+
+    if (emailTouched) {
+      setEmailError(validateEmail(value));
+    }
   };
 
   return (
     <div>
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-app-title mb-1">Lupa password?</h1>
+        <h1 className="text-2xl font-bold text-app-title mb-1">
+          Lupa password?
+        </h1>
         <p className="text-sm text-app-subtext">
           Masukkan email akunmu. Kami akan mengirim instruksi reset password.
         </p>
       </div>
 
       {error && (
-        <div className="mb-4 px-4 py-3 rounded-xl bg-error-bg border border-error text-error text-sm">
+        <Alert variant="error" className="mb-4">
           {error}
-        </div>
+        </Alert>
       )}
 
       {sent ? (
-        /* State: Email terkirim */
         <div className="flex flex-col items-center text-center py-4 gap-4">
           <div className="w-14 h-14 rounded-full bg-success-bg flex items-center justify-center">
             <MailCheck className="w-7 h-7 text-success" />
           </div>
+
           <div>
-            <p className="font-semibold text-app-title mb-1">Email terkirim!</p>
+            <p className="font-semibold text-app-title mb-1">
+              Permintaan diproses
+            </p>
             <p className="text-sm text-app-subtext">
-              Instruksi reset password sudah dikirim ke{" "}
-              <span className="font-medium text-app-title">{email}</span>.<br />
-              Silakan cek inbox (atau folder spam) kamu.
+              Jika email tersebut terdaftar, instruksi reset password akan
+              dikirim ke{" "}
+              <span className="font-medium text-app-title">{email.trim()}</span>.
+              Silakan periksa inbox atau folder spam.
             </p>
           </div>
+
           <Link
             to="/login"
             className="mt-2 text-sm text-accent-forest font-semibold hover:underline"
@@ -67,16 +119,29 @@ const ForgotPasswordPage = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          <Input
-            label="Email"
-            type="email"
-            placeholder="kamu@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            fullWidth
-            required
-            autoComplete="email"
-          />
+          <div>
+            <Input
+              label="Email"
+              type="email"
+              placeholder="kamu@email.com"
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              onBlur={() => {
+                setEmailTouched(true);
+                setEmailError(validateEmail(email));
+              }}
+              fullWidth
+              required
+              autoComplete="email"
+              aria-invalid={Boolean(emailError)}
+            />
+
+            {emailError && (
+              <p className="error-message" role="alert">
+                {emailError}
+              </p>
+            )}
+          </div>
 
           <Button
             type="submit"
@@ -99,7 +164,10 @@ const ForgotPasswordPage = () => {
 
           <p className="text-center text-sm text-app-subtext">
             Ingat password?{" "}
-            <Link to="/login" className="text-accent-forest font-semibold hover:underline">
+            <Link
+              to="/login"
+              className="text-accent-forest font-semibold hover:underline"
+            >
               Masuk
             </Link>
           </p>
@@ -110,4 +178,3 @@ const ForgotPasswordPage = () => {
 };
 
 export default ForgotPasswordPage;
-

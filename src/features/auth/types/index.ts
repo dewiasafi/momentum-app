@@ -1,14 +1,13 @@
-// Standard API Envelope Response
 export interface ApiResponse<T = null> {
   message: string;
-  data?: T;
+  data: T;
 }
 
 export interface ApiErrorResponse {
   error: string;
 }
 
-// User & Entity
+
 export interface User {
   id: string;
   email: string;
@@ -17,10 +16,9 @@ export interface User {
   created_at: string;
 }
 
-// For backward compatibility if needed
 export type AuthUser = User;
 
-// Request Payloads
+//AUTH
 export interface RegisterPayload {
   name: string;
   email: string;
@@ -44,13 +42,12 @@ export interface UpdateProfilePayload {
   name: string;
 }
 
-// Auth Responses
+// RESPONSE DATA AUTH
 export interface RegisterResponseData {
   user: User;
 }
 
 export interface LoginResponseData {
-  token: string;
   user: User;
 }
 
@@ -58,7 +55,15 @@ export interface SessionStatusData {
   active: boolean;
 }
 
-// UI & Form Types
+export type RegisterResponse = ApiResponse<RegisterResponseData>;
+
+export type LoginResponse = ApiResponse<LoginResponseData>;
+
+export type SessionResponse = ApiResponse<SessionStatusData>;
+
+export type ProfileResponse = ApiResponse<User>;
+
+
 export interface RegisterFormData {
   name: string;
   email: string;
@@ -75,13 +80,23 @@ export interface ForgotPasswordFormValues {
   email: string;
 }
 
+
 export interface AuthContextValue {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (payloadOrEmail: LoginPayload | string, password?: string) => Promise<LoginResponseData>;
+
+  login: (
+    payloadOrEmail: LoginPayload | string,
+    password?: string,
+  ) => Promise<LoginResponseData>;
+
   logout: () => void;
   refreshProfile: () => Promise<User | null>;
   checkSession: () => Promise<boolean>;
+}
+
+export interface ForgotPasswordPayload {
+  email: string;
 }
