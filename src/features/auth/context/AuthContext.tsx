@@ -1,5 +1,5 @@
 import {
-  createContext, useCallback, useContext, useEffect, useState, type ReactNode,
+  createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode,
 } from "react";
 import { AuthContextValue, LoginPayload, LoginResponseData, User } from "../types";
 import { authApi } from "../api/auth.api";
@@ -7,63 +7,70 @@ import { authApi } from "../api/auth.api";
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
- 
-const logout = useCallback(async (): Promise<void> => {
-  try {
-    await authApi.logout();
-  } finally {
-    setUser(null);
-  }
-}, []);
+  const sessionCheckInProgress = useRef(false);
+
+  const logout = useCallback(async (): Promise<void> => {
+    try {
+      await authApi.logout();
+    } finally {
+      setUser(null);
+    }
+  }, []);
 
 
   const checkSession = useCallback(async (): Promise<boolean> => {
+    if (sessionCheckInProgress.current) {
+      return false;
+    }
+
+    sessionCheckInProgress.current = true;
+
     try {
-      const sessionResponse = await authApi.getSession()
+      const sessionResponse = await authApi.getSession();
       const session = sessionResponse.data;
 
+      if (typeof session?.active !== "boolean") {
+        return false;
+      }
+    
       if (!session.active) {
-        logout();
+        setUser(null);
         return false;
       }
 
-      const profileResponse = await authApi.getProfile();
-      if (!profileResponse.data) {
-        logout();
-        return false
-      }
-       const profile = profileResponse.data;
+      try {
+        const profileResponse = await authApi.getProfile();
 
-      setUser(profile);
-      return true
-    } catch (error) {
-      logout()
-      return false
+        if (profileResponse.data) {
+          setUser(profileResponse.data);
+          return true;
+        }
+      } catch {
+        
+        // Pertahankan user yang ada jika request profil gagal.
+      }
+
+      return false;
+    } catch {
+      return false;
+    } finally {
+      sessionCheckInProgress.current = false;
     }
-  }, [logout])
+  }, []);
 
   useEffect(() => {
-    let mounted = true
+    let mounted = true;
 
     const initializeSession = async () => {
       try {
-        const sessionResponse = await authApi.getSession();
-        if (!sessionResponse.data?.active) {
-          if (mounted) setUser(null);
-          return;
-        }
-
-        const profileResponse = await authApi.getProfile();
-        if (mounted) {
-          setUser(profileResponse.data ?? null);
-        }
-      } catch (error) {
-        if (mounted) setUser(null);
+        await checkSession();
       } finally {
-        if (mounted) setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
     void initializeSession();
@@ -71,7 +78,7 @@ const logout = useCallback(async (): Promise<void> => {
     return () => {
       mounted = false;
     };
-  }, [])
+  }, [checkSession]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -87,8 +94,7 @@ const logout = useCallback(async (): Promise<void> => {
         handleVisibilityChange,
       );
     };
-
-  }, [checkSession])
+  }, [checkSession]);
 
   const login = async (
     payloadOrEmail: LoginPayload | string,
@@ -97,9 +103,9 @@ const logout = useCallback(async (): Promise<void> => {
     const payload: LoginPayload =
       typeof payloadOrEmail === "string"
         ? {
-          email: payloadOrEmail,
-          password: passwordArg ?? "",
-        }
+            email: payloadOrEmail,
+            password: passwordArg ?? "",
+          }
         : payloadOrEmail;
 
     const response = await authApi.login(payload);

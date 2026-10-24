@@ -13,8 +13,6 @@ export const useRegister = () => {
     password: "",
     confirmPassword: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const registerMutation = useMutation({
@@ -37,9 +35,6 @@ export const useRegister = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (validationError) setValidationError(null);
   };
-
-  const toggleShowPassword = () => setShowPassword((prev) => !prev);
-  const toggleShowConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
 
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,15 +82,11 @@ export const useRegister = () => {
 
   return {
     formData,
-    showPassword,
-    showConfirmPassword,
     validationError,
     isLoading: registerMutation.isPending,
     isSuccess: registerMutation.isSuccess,
     apiError: registerMutation.error ? (registerMutation.error as Error).message : null,
     handleChange,
-    toggleShowPassword,
-    toggleShowConfirmPassword,
     handleSubmit,
   };
 };
