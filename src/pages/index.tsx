@@ -13,6 +13,7 @@ const VerifyNoticePage = lazy(() => import("./auth/VerifyNoticePage"));
 const VerifyEmailPage = lazy(() => import("./auth/VerifyEmailPage"));
 const ResendVerificationPage = lazy(() => import("./auth/ResendVerificationPage"));
 const ForgotPasswordPage = lazy(() => import("./auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./auth/ResetPasswordPage"));
 
 const PageLoader = () => (
   <div className="flex items-center justify-center h-full w-full min-h-75">
@@ -32,6 +33,7 @@ const AppRoutes = () => {
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/resend-verification" element={<ResendVerificationPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Route>
 
         {/* Rute Terproteksi (Wajib Login & Email Terverifikasi) */}

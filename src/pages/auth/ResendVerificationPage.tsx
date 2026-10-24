@@ -3,6 +3,7 @@ import { useSearchParams, useLocation, Link } from "react-router-dom";
 import { Mail, Send, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { authApi } from "@/features/auth/api/auth.api";
 import { Button, Input, Alert } from "@/components/ui";
+import { validateEmail } from "@/features/auth/utils/emailValidation";
 
 const ResendVerificationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -19,20 +20,6 @@ const ResendVerificationPage: React.FC = () => {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const validateEmail = (value: string): string | null => {
-    if (!value.trim()) {
-      return "Silakan masukkan alamat email Anda.";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(value.trim())) {
-      return "Format email tidak valid.";
-    }
-
-    return null;
-  };
 
   const handleEmailChange = (value: string) => {
     setEmail(value);

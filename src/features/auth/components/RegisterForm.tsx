@@ -1,9 +1,15 @@
 
-import React, { useState } from 'react';
-import { useRegister } from '../api/useRegister';
-import { Button, Input, Alert } from '@/components/ui';
-import { Eye, EyeOff, UserPlus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { UserPlus } from "lucide-react";
+import { useRegister } from "../api/useRegister";
+import { Button, Input, Alert } from "@/components/ui";
+import PasswordInput from "@/components/common/PasswordInput";
+import AuthFooter from "./AuthFooter";
+import {
+  validatePassword,
+  validateConfirmPassword,
+} from "@/features/auth/utils/passwordValidation";
+import { validateEmail } from "../utils/emailValidation";
 
 type FieldErrors = {
   name: string;
@@ -15,23 +21,19 @@ type FieldErrors = {
 const RegisterForm = () => {
   const {
     formData,
-    showPassword,
-    showConfirmPassword,
     validationError,
     apiError,
     isLoading,
     isSuccess,
     handleChange,
-    toggleShowPassword,
-    toggleShowConfirmPassword,
     handleSubmit,
   } = useRegister();
 
   const [errors, setErrors] = useState<FieldErrors>({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -39,54 +41,45 @@ const RegisterForm = () => {
   const validateField = (
     field: keyof FieldErrors,
     value: string,
+    currentPassword = formData.password,
   ): string => {
     switch (field) {
-      case 'name':
-        return value.trim() ? '' : 'Nama lengkap wajib diisi.';
+      case "name":
+        return value.trim() ? "" : "Nama lengkap wajib diisi.";
 
-      case 'email':
-        if (!value.trim()) return 'Email wajib diisi.';
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
-          ? ''
-          : 'Masukkan alamat email dengan format yang valid.';
+      case "email":
+          return validateEmail(value) ?? "";
 
-      case 'password':
-        if (!value) return 'Password wajib diisi.';
-        if (value.length < 8) return 'Password minimal 8 karakter.';
-        if (!/[A-Za-z]/.test(value))
-          return 'Password harus mengandung huruf.';
-        if (!/[0-9]/.test(value))
-          return 'Password harus mengandung angka.';
-        if (!/[!@#$%^&*(),.?"{}|<>_\-+=~`]/.test(value))
-          return 'Password harus mengandung simbol yang didukung.';
-        return '';
+      case "password":
+        return validatePassword(value) ?? "";
 
-      case 'confirmPassword':
-        if (!value) return 'Konfirmasi password wajib diisi.';
-        return value === formData.password
-          ? ''
-          : 'Konfirmasi password tidak sama.';
+      case "confirmPassword":
+        return validateConfirmPassword(currentPassword, value) ?? "";
 
       default:
-        return '';
+        return "";
     }
   };
 
   const updateField = (field: keyof FieldErrors, value: string) => {
     handleChange(field, value);
 
-    setErrors((previous) => ({
-      ...previous,
-      [field]: validateField(field, value),
-      ...(field === 'password' && formData.confirmPassword
-        ? {
-          confirmPassword: validateField(
-            'confirmPassword',
-            formData.confirmPassword,
-          ),
-        }
-        : {}),
-    }));
+    setErrors((previous) => {
+      const nextErrors = {
+        ...previous,
+        [field]: validateField(field, value),
+      };
+
+      if (field === 'password' && formData.confirmPassword) {
+        nextErrors.confirmPassword = validateField(
+          "confirmPassword",
+          formData.confirmPassword,
+          value,
+        );
+      }
+
+      return nextErrors;
+    });
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,14 +106,11 @@ const RegisterForm = () => {
   };
 
   const fieldError = (field: keyof FieldErrors) =>
-    submitted || formData[field]
-      ? errors[field]
-      : '';
+    submitted || Boolean(formData[field]) ? errors[field] : "";
 
   const activeError = apiError || validationError;
 
-
-const handleConfirmPasswordPaste = (
+  const handleConfirmPasswordPaste = (
     e: React.ClipboardEvent<HTMLInputElement>,
   ) => {
     e.preventDefault();
@@ -128,20 +118,17 @@ const handleConfirmPasswordPaste = (
     const randomValue = Array.from(
       { length: 50 },
       () => Math.random().toString(36).charAt(2),
-    ).join('');
+    ).join("");
 
-    updateField('confirmPassword', randomValue);
+    updateField("confirmPassword", randomValue);
   };
 
-  const hasFormErrors = (Object.keys(errors) as (keyof FieldErrors)[]).some(
-    (field) => validateField(field, formData[field]) !== '',
-  );
-
+  const hasFormErrors = (
+    Object.keys(errors) as (keyof FieldErrors)[]
+  ).some((field) => validateField(field, formData[field]) !== "");
 
   return (
     <div className="space-y-4">
-
-
       {isSuccess && (
         <Alert variant="success" className="mb-4">
           Akun berhasil dibuat! Silakan verifikasi email sebelum login.
@@ -149,105 +136,52 @@ const handleConfirmPasswordPaste = (
       )}
 
       <form onSubmit={handleFormSubmit} noValidate className="space-y-4">
-        <div>
-          <Input
-            label="Nama Lengkap"
-            type="text"
-            placeholder="Contoh: Admin"
-            value={formData.name}
-            errorText={errors.name}
-            onChange={(e) => updateField('name', e.target.value)}
-            fullWidth
-            required
-            autoComplete="name"
-          />
-          {fieldError('name') && (
-            <p className="error-message" role="alert">
-              {fieldError('name')}
-            </p>
-          )}
-        </div>
+        <Input
+          label="Nama Lengkap"
+          type="text"
+          placeholder="Contoh: Admin"
+          value={formData.name}
+          errorText={fieldError("name")}
+          onChange={(e) => updateField("name", e.target.value)}
+          fullWidth
+          required
+          autoComplete="name"
+        />
 
-        <div>
-          <Input
-            label="Email"
-            type="email"
-            placeholder="nama@email.com"
-            value={formData.email}
-            errorText={errors.email}
-            onChange={(e) => updateField('email', e.target.value)}
-            fullWidth
-            required
-            autoComplete="email"
-          />
-        </div>
+        <Input
+          label="Email"
+          type="email"
+          placeholder="nama@email.com"
+          value={formData.email}
+          errorText={fieldError("email")}
+          onChange={(e) => updateField("email", e.target.value)}
+          fullWidth
+          required
+          autoComplete="email"
+        />
 
-        <div>
-          <Input
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Min. 8 karakter (huruf, angka, simbol)"
-            value={formData.password}
-            errorText={errors.password}
-            onChange={(e) => updateField('password', e.target.value)}
-            fullWidth
-            required
-            autoComplete="new-password"
-            rightIcon={
-              <button
-                type="button"
-                onClick={toggleShowPassword}
-                className="text-app-subtext hover:text-app-title transition-colors cursor-pointer"
-                aria-label={
-                  showPassword ? 'Sembunyikan password' : 'Tampilkan password'
-                }
-              >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>
-            }
-          />
-        </div>
+        <PasswordInput
+          label="Password"
+          placeholder="Min. 8 karakter (huruf, angka, simbol)"
+          value={formData.password}
+          errorText={fieldError("password")}
+          onChange={(e) => updateField("password", e.target.value)}
+          fullWidth
+          required
+          autoComplete="new-password"
+        />
 
-
-        <div>
-
-          <Input
-            label="Konfirmasi Password"
-            type={showConfirmPassword ? 'text' : 'password'}
-            placeholder="Ulangi password"
-            value={formData.confirmPassword}
-            onChange={(e) =>
-              updateField('confirmPassword', e.target.value)
-            }
-            errorText={errors.confirmPassword}
-            onPaste={handleConfirmPasswordPaste}
-            fullWidth
-            required
-            autoComplete="new-password"
-            rightIcon={
-              <button
-                type="button"
-                onClick={toggleShowConfirmPassword}
-                className="text-app-subtext hover:text-app-title transition-colors cursor-pointer"
-                aria-label={
-                  showConfirmPassword
-                    ? 'Sembunyikan konfirmasi password'
-                    : 'Tampilkan konfirmasi password'
-                }
-              >
-                {showConfirmPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>
-            }
-          />
-        </div>
+        <PasswordInput
+          label="Konfirmasi Password"
+          placeholder="Ulangi password"
+          value={formData.confirmPassword}
+          errorText={fieldError("confirmPassword")}
+          onChange={(e) => updateField("confirmPassword", e.target.value)}
+          onPaste={handleConfirmPasswordPaste}
+          fullWidth
+          required
+          autoComplete="new-password"
+        />
 
         {activeError && (
           <Alert variant="error" className="mb-4">
@@ -276,15 +210,11 @@ const handleConfirmPasswordPaste = (
         </Button>
       </form>
 
-      <div className="text-center text-sm text-app-subtext pt-2">
-        Sudah punya akun?{' '}
-        <Link
-          to="/login"
-          className="text-accent-forest font-semibold hover:underline"
-        >
-          Masuk di sini
-        </Link>
-      </div>
+      <AuthFooter
+        prompt="Sudah punya akun?"
+        linkText="Masuk di sini"
+        linkTo="/login"
+      />
     </div>
   );
 };

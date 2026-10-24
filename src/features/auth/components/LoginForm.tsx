@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, LogIn, Mail, RefreshCw } from 'lucide-react';
+import { LogIn, Mail, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api/auth.api';
 import { Alert, Button, Input } from '@/components/ui';
+import PasswordInput from '@/components/common/PasswordInput';
+import AuthFooter from './AuthFooter';
+import { validateEmail } from '../utils/emailValidation';
+import { validatePasswordLogin } from '../utils/passwordValidation';
 
 export const LoginForm = () => {
   const { login } = useAuth();
@@ -15,7 +19,6 @@ export const LoginForm = () => {
 
   const [email, setEmail] = useState(navState?.email || '');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isUnverified, setIsUnverified] = useState(false);
@@ -29,28 +32,6 @@ export const LoginForm = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
-
-  const validateEmail = (value: string): string | null => {
-    if (!value.trim()) return "Email wajib diisi.";
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(value.trim())) {
-      return "Masukkan alamat email dengan format yang valid.";
-    }
-
-    return null;
-  };
-
-  const validatePassword = (value: string): string | null => {
-    if (!value) return "Password wajib diisi.";
-
-    if (value.length < 8) {
-      return "Password minimal 8 karakter.";
-    }
-
-    return null;
-  };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
 
@@ -67,7 +48,7 @@ export const LoginForm = () => {
     setPasswordTouched(true);
 
     const currentEmailError = validateEmail(email);
-    const currentPasswordError = validatePassword(password);
+    const currentPasswordError = validatePasswordLogin(password);
 
     setEmailError(currentEmailError);
     setPasswordError(currentPasswordError);
@@ -240,48 +221,29 @@ export const LoginForm = () => {
             errorText={emailError || ""}
           />
         </div>
+  
+        <PasswordInput
+          label="Password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => {
+            const value = e.target.value;
+            setPassword(value);
 
-
-
-        <div>
-          <Input
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => {
-              const value = e.target.value;
-              setPassword(value);
-
-              if (passwordTouched) {
-                setPasswordError(validatePassword(value));
-              }
-            }}
-            onBlur={() => {
-              setPasswordTouched(true);
-              setPasswordError(validatePassword(password));
-            }}
-            fullWidth
-            required
-            autoComplete="current-password"
-            aria-invalid={!!passwordError}
-            errorText={passwordError || ""}
-            rightIcon={
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="text-app-subtext hover:text-app-title transition-colors cursor-pointer"
-                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
-              >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>
+            if (passwordTouched) {
+              setPasswordError(validatePasswordLogin(value));
             }
-          />
-        </div>
+          }}
+          onBlur={() => {
+            setPasswordTouched(true);
+            setPasswordError(validatePasswordLogin(password));
+          }}
+          fullWidth
+          required
+          autoComplete="current-password"
+          aria-invalid={!!passwordError}
+          errorText={passwordError || ""}
+        />
 
 
         <div className="flex items-center justify-end">
@@ -314,12 +276,11 @@ export const LoginForm = () => {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-app-subtext">
-        Belum punya akun?{" "}
-        <Link to="/register" className="text-accent-forest font-semibold hover:underline">
-          Daftar sekarang
-        </Link>
-      </p>
+      <AuthFooter
+        prompt="Belum punya akun?"
+        linkText="Daftar sekarang"
+        linkTo="/register"
+      />
     </div>
   );
 };

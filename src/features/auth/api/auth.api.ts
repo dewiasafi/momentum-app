@@ -8,6 +8,7 @@ import type {
   RegisterPayload,
   RegisterResponseData,
   ResendVerificationPayload,
+  ResetPasswordPayload,
   SessionStatusData,
   UpdateProfilePayload,
   User,
@@ -78,6 +79,16 @@ export const authApi = {
     );
     return response.data;
   },
+  resetPassword: async (
+  payload: ResetPasswordPayload
+): Promise<ApiResponse<null>> => {
+  const response = await apiClient.post<ApiResponse<null>>(
+    "/auth/reset-password",
+    payload
+  );
+
+  return response.data;
+},
 
 };
 
