@@ -10,7 +10,6 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Ambil state dari navigasi (misal redirect dari register atau verify-email)
   const navState = location.state as { from?: Location; email?: string; successMessage?: string } | null;
   const from = navState?.from?.pathname;
 
@@ -238,12 +237,8 @@ export const LoginForm = () => {
             required
             autoComplete="email"
             aria-invalid={!!emailError}
+            errorText={emailError || ""}
           />
-          {emailError && (
-            <p className="error-message" role="alert">
-              {emailError}
-            </p>
-          )}
         </div>
 
 
@@ -270,6 +265,7 @@ export const LoginForm = () => {
             required
             autoComplete="current-password"
             aria-invalid={!!passwordError}
+            errorText={passwordError || ""}
             rightIcon={
               <button
                 type="button"
@@ -285,11 +281,6 @@ export const LoginForm = () => {
               </button>
             }
           />
-          {passwordError && (
-            <p className="error-message" role="alert">
-              {passwordError}
-            </p>
-          )}
         </div>
 
 

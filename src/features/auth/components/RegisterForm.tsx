@@ -57,8 +57,8 @@ const RegisterForm = () => {
           return 'Password harus mengandung huruf.';
         if (!/[0-9]/.test(value))
           return 'Password harus mengandung angka.';
-        if (!/[^A-Za-z0-9]/.test(value))
-          return 'Password harus mengandung simbol.';
+        if (!/[!@#$%^&*(),.?"{}|<>_\-+=~`]/.test(value))
+          return 'Password harus mengandung simbol yang didukung.';
         return '';
 
       case 'confirmPassword':
@@ -120,7 +120,7 @@ const RegisterForm = () => {
   const activeError = apiError || validationError;
 
 
-  const handleConfirmPasswordPaste = (
+const handleConfirmPasswordPaste = (
     e: React.ClipboardEvent<HTMLInputElement>,
   ) => {
     e.preventDefault();
@@ -132,6 +132,11 @@ const RegisterForm = () => {
 
     updateField('confirmPassword', randomValue);
   };
+
+  const hasFormErrors = (Object.keys(errors) as (keyof FieldErrors)[]).some(
+    (field) => validateField(field, formData[field]) !== '',
+  );
+
 
   return (
     <div className="space-y-4">
@@ -150,6 +155,7 @@ const RegisterForm = () => {
             type="text"
             placeholder="Contoh: Admin"
             value={formData.name}
+            errorText={errors.name}
             onChange={(e) => updateField('name', e.target.value)}
             fullWidth
             required
@@ -168,16 +174,12 @@ const RegisterForm = () => {
             type="email"
             placeholder="nama@email.com"
             value={formData.email}
+            errorText={errors.email}
             onChange={(e) => updateField('email', e.target.value)}
             fullWidth
             required
             autoComplete="email"
           />
-          {fieldError('email') && (
-            <p className="error-message" role="alert">
-              {fieldError('email')}
-            </p>
-          )}
         </div>
 
         <div>
@@ -186,7 +188,7 @@ const RegisterForm = () => {
             type={showPassword ? 'text' : 'password'}
             placeholder="Min. 8 karakter (huruf, angka, simbol)"
             value={formData.password}
-            helperText="Minimal 8 karakter, wajib kombinasi huruf, angka, dan simbol."
+            errorText={errors.password}
             onChange={(e) => updateField('password', e.target.value)}
             fullWidth
             required
@@ -208,11 +210,6 @@ const RegisterForm = () => {
               </button>
             }
           />
-          {fieldError('password') && (
-            <p className="error-message" role="alert">
-              {fieldError('password')}
-            </p>
-          )}
         </div>
 
 
@@ -226,6 +223,7 @@ const RegisterForm = () => {
             onChange={(e) =>
               updateField('confirmPassword', e.target.value)
             }
+            errorText={errors.confirmPassword}
             onPaste={handleConfirmPasswordPaste}
             fullWidth
             required
@@ -249,13 +247,6 @@ const RegisterForm = () => {
               </button>
             }
           />
-
-
-          {fieldError('confirmPassword') && (
-            <p className="error-message" role="alert">
-              {fieldError('confirmPassword')}
-            </p>
-          )}
         </div>
 
         {activeError && (
@@ -268,7 +259,7 @@ const RegisterForm = () => {
           type="submit"
           variant="primary"
           fullWidth
-          disabled={isLoading || isSuccess}
+          disabled={isLoading || isSuccess || hasFormErrors}
           className="mt-2"
         >
           {isLoading ? (

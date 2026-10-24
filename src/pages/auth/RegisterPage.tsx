@@ -4,7 +4,10 @@ import RegisterForm from "@/features/auth/components/RegisterForm";
 const RegisterPage = () => {
   return (
     <div>
-      <AuthHeader title='Create New Account' subTitle='Join momentum and catch your moment' />
+      Í<AuthHeader
+        title="Buat Akun Momentum"
+        subTitle="Daftar untuk mulai mencatat perjalanan dan perkembangan Anda"
+      />
       <RegisterForm />
     </div>
 

@@ -26,7 +26,6 @@ export const useRegister = () => {
       }),
     onSuccess: () => {
       setValidationError(null);
-      // Sesuai dokumen Sprint 0: redirect ke /verify-notice dengan membawa email terdaftar
       navigate("/verify-notice", {
         replace: true,
         state: { email: formData.email.trim() },
@@ -69,11 +68,11 @@ export const useRegister = () => {
 
     const hasLetter = /[a-zA-Z]/.test(password);
     const hasNumber = /\d/.test(password);
-    const hasSymbol = /[^a-zA-Z0-9]/.test(password);
+    const hasSymbol = /[!@#$%^&*(),.?"{}|<>_\-+=~`]/.test(password);
 
     if (!hasLetter || !hasNumber || !hasSymbol) {
       setValidationError(
-        "Password wajib berupa kombinasi huruf, angka, dan simbol."
+        "Password wajib berupa kombinasi huruf, angka, dan simbol yang didukung."
       );
       return;
     }

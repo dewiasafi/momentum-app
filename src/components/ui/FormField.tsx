@@ -57,7 +57,7 @@ export default function FormField({
                          <div>
                               {errorText ? (
                                    <p id={`${id}-error`} className="text-xs font-medium text-rose-600">
-                                        ⚠️ {errorText}
+                                        {errorText}
                                    </p>
                               ) : helperText ? (
                                    <p id={`${id}-helper`} className="text-xs text-text-subtext">
